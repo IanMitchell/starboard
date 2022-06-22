@@ -1,0 +1,62 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["metrics"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model GuildSetting {
+  guildId        BigInt           @id
+  log            BigInt           @default(0)
+  amount         BigInt           @default(7)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  channelSetting ChannelSetting[]
+
+}
+
+model ChannelSetting {
+  channelId           BigInt       @id
+  guild               GuildSetting @relation(fields: [guildSettingGuildId], references: [guildId])
+  guildSettingGuildId BigInt
+  visible             Boolean
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+}
+
+model Message {
+  messageId   BigInt   @id
+  guildId     BigInt
+  channelId   BigInt
+  // TODO: Rename to something better
+  crosspostId BigInt   @unique
+  count       Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+
+  @@index([channelId, messageId])
+}
+
+model BlockedMessage {
+  messageId BigInt   @id
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model StarCount {
+  id      Int    @id @default(autoincrement())
+  userId  BigInt
+  guildId BigInt
+  amount  Int
+
+  @@unique([userId, guildId])
+  @@index([userId, guildId])
+  @@index([amount])
+}
