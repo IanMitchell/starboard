@@ -11,7 +11,11 @@ export default async ({ bot }: CommandArgs) => {
 
 	bot.on("messageReactionRemove", async (reaction, user) => {
 		log.debug("Removing reaction");
-		if (reaction.emoji.name !== "⭐" || reaction.message.guildId === null) {
+		if (
+			reaction.emoji.name !== "⭐" ||
+			reaction.message.guildId === null ||
+			reaction.message.author === user
+		) {
 			return;
 		}
 
@@ -45,7 +49,7 @@ export default async ({ bot }: CommandArgs) => {
 
 	bot.on("messageReactionAdd", async (raw, user) => {
 		log.debug("Handling new reaction");
-		if (raw.emoji.name !== "⭐") {
+		if (raw.emoji.name !== "⭐" || raw.message.author === user) {
 			return;
 		}
 
