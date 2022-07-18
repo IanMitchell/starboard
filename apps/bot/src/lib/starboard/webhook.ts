@@ -5,6 +5,7 @@ import {
 	MessageActionRow,
 	NewsChannel,
 	TextChannel,
+	WebhookMessageOptions,
 } from "discord.js";
 
 export async function createWebhookMessage(
@@ -30,10 +31,27 @@ export async function createWebhookMessage(
 		}
 	);
 
+	const embeds = Array.from(message.embeds.values()).map((embed) =>
+		embed.toJSON()
+	);
+
+	const webhookMessage: Omit<WebhookMessageOptions, "flags"> = {};
+
+	if (message.content != null && message.content.length > 0) {
+		webhookMessage.content = message.content;
+	}
+
+	if (attachments.length > 0) {
+		webhookMessage.files = attachments;
+	}
+
+	if (embeds.length > 0) {
+		webhookMessage.embeds = embeds;
+	}
+
 	// TODO: Add support for image metadata
 	const post = await webhook.send({
-		content: message.content,
-		files: attachments,
+		...webhookMessage,
 		components: [new MessageActionRow().addComponents(link)],
 	});
 

@@ -50,11 +50,16 @@ export default async ({ bot }: CommandArgs) => {
 
 		const users = await bot.database.message.groupBy({
 			by: ["userId"],
+			_count: {
+				messageId: true,
+			},
 			where: {
 				guildId,
 			},
 			orderBy: {
-				count: "desc",
+				_count: {
+					messageId: "desc",
+				},
 			},
 			take: 10,
 		});
@@ -73,30 +78,34 @@ export default async ({ bot }: CommandArgs) => {
 			take: 10,
 		});
 
-		const messageList =
-			users?.reduce(
+		let messageList = "There are no messages!";
+		if (users.length > 0) {
+			messageList = users?.reduce(
 				(message, user, index) =>
-					`${message}**${index}.** ${userMention(user.userId)}, ${
-						user.count
-					} messages\n`,
+					`${message}**${index + 1}.** ${userMention(
+						user.userId.toString()
+					)}, ${user._count.messageId.toString()} messages\n`,
 				""
-			) ?? "There are no messages!";
+			);
+		}
 
-		const reactionList =
-			reactions?.reduce(
+		let reactionList = "There are no reactions!";
+		if (reactions.length > 0) {
+			reactionList = reactions?.reduce(
 				(message, user, index) =>
-					`${message}**${index}.** ${userMention(user.userId.toString())} - ${
-						user.amount
-					} stars\n`,
+					`${message}**${index + 1}.** ${userMention(
+						user.userId.toString()
+					)} - ${user.amount} stars\n`,
 				""
-			) ?? "There are no reactions!";
+			);
+		}
 
 		void interaction.editReply({
 			allowedMentions: {},
 			embeds: [
 				new MessageEmbed()
 					.setTitle("Starboard Leaderboard")
-					.setColor() // yellow
+					.setColor(0xfee75c)
 					.setURL("https://starboard.social")
 					.addField("Top Messages", messageList, true)
 					.addField("Top Reactions", reactionList, true),

@@ -34,6 +34,7 @@ model Message {
   messageId   BigInt   @id
   guildId     BigInt
   channelId   BigInt
+  userId      BigInt
   // TODO: Rename to something better
   crosspostId BigInt   @unique
   count       Int

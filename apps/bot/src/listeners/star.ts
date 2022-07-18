@@ -48,13 +48,15 @@ export default async ({ bot }: CommandArgs) => {
 	});
 
 	bot.on("messageReactionAdd", async (raw, user) => {
-		log.debug("Handling new reaction");
 		if (raw.emoji.name !== "⭐" || raw.message.author === user) {
 			return;
 		}
 
+		// TODO: Add getReactionMeta
+		log.debug("Handling new reaction");
+
 		const reaction = raw.partial ? await raw.fetch() : raw;
-		if (reaction.message.guildId === null) {
+		if (reaction.message.guildId === null || reaction.message.author == null) {
 			return;
 		}
 
@@ -62,6 +64,7 @@ export default async ({ bot }: CommandArgs) => {
 		const channelId = BigInt(reaction.message.channelId);
 		const messageId = BigInt(reaction.message.id);
 		const userId = BigInt(user.id);
+		const authorId = BigInt(reaction.message.author.id);
 		const count = reaction.count ?? 0;
 
 		log.info(`Processing star reaction for message ${reaction.message.id}`, {
@@ -189,6 +192,7 @@ export default async ({ bot }: CommandArgs) => {
 					messageId,
 					channelId,
 					guildId,
+					userId: authorId,
 					count,
 					crosspostId: BigInt(posted.id),
 				},
