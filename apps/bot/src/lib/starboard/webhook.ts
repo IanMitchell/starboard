@@ -53,6 +53,7 @@ export async function createWebhookMessage(
 	const post = await webhook.send({
 		...webhookMessage,
 		components: [new MessageActionRow().addComponents(link)],
+		allowedMentions: {},
 	});
 
 	await webhook.delete();

@@ -145,8 +145,8 @@ export class Application extends Client {
 		>();
 
 		[
-			...Array.from(this.slashCommands.values()),
-			...Array.from(this.contextMenuCommands.values()),
+			...this.slashCommands.values(),
+			...this.contextMenuCommands.values(),
 		].forEach((entry) => {
 			const [{ name }] = entry.commands;
 			if (commands.has(name)) {

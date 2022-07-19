@@ -3,6 +3,7 @@ import { CommandInteraction, MessageEmbed } from "discord.js";
 import { Counter } from "prom-client";
 import { CommandArgs } from "../typedefs";
 import getLogger, { getInteractionMeta } from "../lib/core/logging";
+import { plural } from "../lib/starboard/plural";
 
 const log = getLogger("leaderboard");
 
@@ -64,7 +65,7 @@ export default async ({ bot }: CommandArgs) => {
 			take: 10,
 		});
 
-		const reactions = await bot.database.starCount.findMany({
+		const givenReactions = await bot.database.starCount.findMany({
 			select: {
 				userId: true,
 				amount: true,
@@ -78,24 +79,59 @@ export default async ({ bot }: CommandArgs) => {
 			take: 10,
 		});
 
+		const receivedReactions = await bot.database.message.groupBy({
+			by: ["userId"],
+			_sum: {
+				count: true,
+			},
+			where: {
+				guildId,
+			},
+			orderBy: {
+				_sum: {
+					count: "desc",
+				},
+			},
+			take: 10,
+		});
+
 		let messageList = "There are no messages!";
 		if (users.length > 0) {
 			messageList = users?.reduce(
 				(message, user, index) =>
 					`${message}**${index + 1}.** ${userMention(
 						user.userId.toString()
-					)}, ${user._count.messageId.toString()} messages\n`,
+					)}, ${user._count.messageId.toString()} ${plural(
+						user._count.messageId,
+						"message",
+						"messages"
+					)}\n`,
 				""
 			);
 		}
 
-		let reactionList = "There are no reactions!";
-		if (reactions.length > 0) {
-			reactionList = reactions?.reduce(
+		let receivedList = "There aren't any starboard messages!";
+		if (receivedReactions.length > 0) {
+			receivedList = receivedReactions?.reduce(
 				(message, user, index) =>
 					`${message}**${index + 1}.** ${userMention(
 						user.userId.toString()
-					)} - ${user.amount} stars\n`,
+					)}, ${(user._sum.count ?? 0).toString()} ${plural(
+						user._sum.count ?? 0,
+						"star",
+						"stars"
+					)}\n`,
+				""
+			);
+		}
+
+		let givenList = "There haven't been any stars given!";
+		if (givenReactions.length > 0) {
+			givenList = givenReactions?.reduce(
+				(message, user, index) =>
+					`${message}**${index + 1}.** ${userMention(
+						user.userId.toString()
+					)} - ${user.amount} ${plural(user.amount, "star", "stars")}\n`,
 				""
 			);
 		}
@@ -107,8 +143,9 @@ export default async ({ bot }: CommandArgs) => {
 					.setTitle("Starboard Leaderboard")
 					.setColor(0xfee75c)
 					.setURL("https://starboard.social")
-					.addField("Top Messages", messageList, true)
-					.addField("Top Reactions", reactionList, true),
+					.addField("Most Starboard Messages", messageList, true)
+					.addField("Most Stars Received", receivedList, true)
+					.addField("Most Stars Given", givenList),
 			],
 		});
 	});

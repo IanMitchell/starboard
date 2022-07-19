@@ -1,6 +1,6 @@
 import { createWebhookMessage } from "../lib/starboard/webhook";
 import { CommandArgs } from "../typedefs";
-import getLogger from "../lib/core/logging";
+import getLogger, { getReactionMeta } from "../lib/core/logging";
 import { isPublicTextChannel } from "../lib/core/discord/text-channels";
 
 const log = getLogger("star");
@@ -47,15 +47,16 @@ export default async ({ bot }: CommandArgs) => {
 		});
 	});
 
-	bot.on("messageReactionAdd", async (raw, user) => {
-		if (raw.emoji.name !== "⭐" || raw.message.author === user) {
+	bot.on("messageReactionAdd", async (raw, rawUser) => {
+		if (raw.emoji.name !== "⭐" || raw.message.author === rawUser) {
 			return;
 		}
 
-		// TODO: Add getReactionMeta
-		log.debug("Handling new reaction");
-
 		const reaction = raw.partial ? await raw.fetch() : raw;
+		const user = rawUser.partial ? await rawUser.fetch() : rawUser;
+
+		log.debug("Handling new reaction", getReactionMeta(reaction, user));
+
 		if (reaction.message.guildId === null || reaction.message.author == null) {
 			return;
 		}
