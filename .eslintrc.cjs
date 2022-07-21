@@ -20,6 +20,7 @@ module.exports = {
 		"eqeqeq": ["error", "smart"],
 		"capitalized-comments": 0,
 		"arrow-body-style": 0,
+		"complexity": 0,
 	},
 	settings: {
 		"import/resolver": {

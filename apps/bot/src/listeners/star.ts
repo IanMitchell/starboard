@@ -2,6 +2,8 @@ import { createWebhookMessage } from "../lib/starboard/webhook";
 import { CommandArgs } from "../typedefs";
 import getLogger, { getReactionMeta } from "../lib/core/logging";
 import { isPublicTextChannel } from "../lib/core/discord/text-channels";
+import { getError } from "../lib/core/node/error";
+import Sentry from "../lib/core/logging/sentry";
 
 const log = getLogger("star");
 const messageSemaphores = new Set();
@@ -185,7 +187,15 @@ export default async ({ bot }: CommandArgs) => {
 			return;
 		}
 
-		const posted = await createWebhookMessage(channel, targetMessage);
+		let posted = null;
+
+		try {
+			posted = await createWebhookMessage(channel, targetMessage);
+		} catch (err: unknown) {
+			const error = getError(err);
+			log.error(error.message, { error });
+			Sentry.captureException(error);
+		}
 
 		if (posted != null) {
 			await bot.database.message.create({

@@ -98,13 +98,9 @@ export default async ({ bot }: CommandArgs) => {
 		let messageList = "There are no messages!";
 		if (users.length > 0) {
 			messageList = users?.reduce(
-				(message, user, index) =>
-					`${message}**${index + 1}.** ${userMention(
+				(message, user) =>
+					`${message}**${user._count.messageId}** - ${userMention(
 						user.userId.toString()
-					)}, ${user._count.messageId.toString()} ${plural(
-						user._count.messageId,
-						"message",
-						"messages"
 					)}\n`,
 				""
 			);
@@ -113,13 +109,9 @@ export default async ({ bot }: CommandArgs) => {
 		let receivedList = "There aren't any starboard messages!";
 		if (receivedReactions.length > 0) {
 			receivedList = receivedReactions?.reduce(
-				(message, user, index) =>
-					`${message}**${index + 1}.** ${userMention(
+				(message, user) =>
+					`${message}**${user._sum.count ?? 0}** - ${userMention(
 						user.userId.toString()
-					)}, ${(user._sum.count ?? 0).toString()} ${plural(
-						user._sum.count ?? 0,
-						"star",
-						"stars"
 					)}\n`,
 				""
 			);
@@ -128,10 +120,10 @@ export default async ({ bot }: CommandArgs) => {
 		let givenList = "There haven't been any stars given!";
 		if (givenReactions.length > 0) {
 			givenList = givenReactions?.reduce(
-				(message, user, index) =>
-					`${message}**${index + 1}.** ${userMention(
+				(message, user) =>
+					`${message}**${user.amount}** - ${userMention(
 						user.userId.toString()
-					)} - ${user.amount} ${plural(user.amount, "star", "stars")}\n`,
+					)}\n`,
 				""
 			);
 		}
@@ -144,8 +136,8 @@ export default async ({ bot }: CommandArgs) => {
 					.setColor(0xfee75c)
 					.setURL("https://starboard.social")
 					.addField("Most Starboard Messages", messageList, true)
-					.addField("Most Stars Received", receivedList, true)
-					.addField("Most Stars Given", givenList),
+					.addField("Most ⭐️ Received", receivedList, true)
+					.addField("Most ⭐️ Given", givenList),
 			],
 		});
 	});
