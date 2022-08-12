@@ -31,21 +31,20 @@ export const command = new SlashCommandBuilder()
 export default async ({ bot }: CommandArgs) => {
 	bot.onSlashCommand(command, async (interaction) => {
 		if (!interaction.inCachedGuild()) {
-			log.warn("Handled an interaction in a non-cached guild");
-			await interaction.reply({
+			log.warn(
+				`Handled an interaction in a non-cached guild ${
+					interaction.guildId ?? "[unknown]"
+				}`,
+				getInteractionMeta(interaction)
+			);
+			return interaction.reply({
 				content: "Please add the bot before running this command",
 				ephemeral: true,
 			});
-			return;
 		}
 
 		amountCounter.inc();
 		const amount = interaction.options.getInteger("amount", true);
-
-		log.info(
-			`Setting new amount value to ${amount}`,
-			getInteractionMeta(interaction)
-		);
 
 		if (amount < 1) {
 			await interaction.reply({
@@ -56,14 +55,10 @@ export default async ({ bot }: CommandArgs) => {
 			return;
 		}
 
-		if (interaction.guild?.id == null) {
-			log.warn("Unable to find Guild");
-			await interaction.reply({
-				content: "I wasn't about to find a guild for this command!",
-				ephemeral: true,
-			});
-			return;
-		}
+		log.info(
+			`Setting new amount value to ${amount} in guild ${interaction.guildId}`,
+			getInteractionMeta(interaction)
+		);
 
 		await interaction.deferReply({ ephemeral: true });
 		await bot.database.guildSetting.upsert({

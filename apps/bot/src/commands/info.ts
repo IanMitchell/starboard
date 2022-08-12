@@ -34,12 +34,16 @@ export default async ({ bot }: CommandArgs) => {
 		}
 
 		if (!interaction.inCachedGuild()) {
-			log.warn("Handled an interaction in a non-cached guild");
-			await interaction.reply({
+			log.warn(
+				`Handled an interaction in a non-cached guild ${
+					interaction.guildId ?? "[unknown]"
+				}`,
+				getInteractionMeta(interaction)
+			);
+			return interaction.reply({
 				content: "Please add the bot before running this command",
 				ephemeral: true,
 			});
-			return;
 		}
 
 		infoCounter.inc();

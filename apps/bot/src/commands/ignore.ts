@@ -28,7 +28,10 @@ export default async ({ bot }: CommandArgs) => {
 		log.info("Handler");
 
 		if (!interaction.isMessageContextMenu()) {
-			log.warn("Handled a non-message context menu interaction");
+			log.warn(
+				"Handled a non-message context menu interaction",
+				getInteractionMeta(interaction)
+			);
 			await interaction.reply({
 				content: "Sorry, an unknown error occurred.",
 				ephemeral: true,
@@ -37,30 +40,30 @@ export default async ({ bot }: CommandArgs) => {
 		}
 
 		if (!interaction.inCachedGuild()) {
-			log.warn("Handled an interaction in a non-cached guild");
-			await interaction.reply({
+			log.warn(
+				`Handled an interaction in a non-cached guild ${
+					interaction.guildId ?? "[unknown]"
+				}`,
+				getInteractionMeta(interaction)
+			);
+			return interaction.reply({
 				content: "Please add the bot before running this command",
 				ephemeral: true,
 			});
-			return;
 		}
 
 		ignoreCounter.inc();
-		log.info("Ignoring new message", getInteractionMeta(interaction));
-
-		if (interaction.guild?.id == null) {
-			log.warn("Unable to find Guild");
-			await interaction.reply({
-				content: "I wasn't about to find a guild for this command!",
-				ephemeral: true,
-			});
-			return;
-		}
-
+		log.info(
+			`Ignoring new message ${interaction.targetId}`,
+			getInteractionMeta(interaction)
+		);
 		const message = await messages.fetchInteractionMessage(interaction);
 
 		if (message == null) {
-			log.warn("Unable to find message");
+			log.warn(
+				`Unable to find message ${interaction.targetId}`,
+				getInteractionMeta(interaction)
+			);
 			await interaction.reply({
 				content: "I wasn't about to find the target message!",
 				ephemeral: true,
