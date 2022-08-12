@@ -28,19 +28,19 @@ export default function shieldRoutes(
 	done: (err?: Error) => void
 ) {
 	server.get("/shields/guilds", async (request, response) => {
-		log.info("Shield: Guilds");
+		log.info("Guild requested");
 		const value = await getTotalGuildCount();
 		return response.send(createShield("Guilds", value.toLocaleString()));
 	});
 
 	server.get("/shields/users", async (request, response) => {
-		log.info("Shield: Users");
+		log.info("Users requested");
 		const value = await getTotalMemberCount();
 		return response.send(createShield("Users", value.toLocaleString()));
 	});
 
 	server.get("/shields/messages", async (request, response) => {
-		log.info("Shield: Messages");
+		log.info("Messages requested");
 		const value = await getTotalMessageCount();
 		return response.send(
 			createShield("Starboard Messages", value.toLocaleString())
@@ -48,7 +48,7 @@ export default function shieldRoutes(
 	});
 
 	server.get("/shields/stars", async (request, response) => {
-		log.info("Shield: Stars");
+		log.info("Stars requested");
 		const value = await getTotalStarCount();
 		return response.send(
 			createShield("Starboard Reactions", value.toLocaleString())

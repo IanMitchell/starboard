@@ -25,11 +25,7 @@ export async function createWebhookMessage(
 		.setLabel("View Original")
 		.toJSON();
 
-	const attachments = Array.from(message.attachments.values()).map(
-		(attachment) => {
-			return attachment.url;
-		}
-	);
+	const attachments = [...message.attachments.values()];
 
 	const embeds = Array.from(message.embeds.values()).map((embed) =>
 		embed.toJSON()
@@ -49,7 +45,6 @@ export async function createWebhookMessage(
 		webhookMessage.embeds = embeds;
 	}
 
-	// TODO: Add support for image metadata
 	const post = await webhook.send({
 		...webhookMessage,
 		components: [new MessageActionRow().addComponents(link)],

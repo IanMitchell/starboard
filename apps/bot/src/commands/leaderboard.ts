@@ -3,7 +3,6 @@ import { CommandInteraction, MessageEmbed } from "discord.js";
 import { Counter } from "prom-client";
 import { CommandArgs } from "../typedefs";
 import getLogger, { getInteractionMeta } from "../lib/core/logging";
-import { plural } from "../lib/starboard/plural";
 
 const log = getLogger("leaderboard");
 
@@ -22,11 +21,16 @@ export const command = new SlashCommandBuilder()
 export default async ({ bot }: CommandArgs) => {
 	bot.onSlashCommand(command, async (interaction: CommandInteraction) => {
 		if (!interaction.inCachedGuild()) {
-			await interaction.reply({
+			log.warn(
+				`Handled an interaction in a non-cached guild ${
+					interaction.guildId ?? "[unknown]"
+				}`,
+				getInteractionMeta(interaction)
+			);
+			return interaction.reply({
 				content: "Please add the bot before running this command",
 				ephemeral: true,
 			});
-			return;
 		}
 
 		if (interaction.guild?.id == null) {

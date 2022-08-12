@@ -29,20 +29,25 @@ export default async ({ bot }: CommandArgs) => {
 			interaction.isMessageComponent() &&
 			interaction.customId.startsWith(DELETE_BUTTON_PREFIX)
 		) {
-			deleteCounter.inc();
-			const { guild } = interaction;
-
-			if (guild == null) {
-				log.warn("Handled an interaction in an unknown guild");
-				await interaction.reply({
-					content: "I wasn't about to find a guild for this command!",
+			if (!interaction.inCachedGuild()) {
+				log.warn(
+					`Handled an interaction in a non-cached guild ${
+						interaction.guildId ?? "[unknown]"
+					}`,
+					getInteractionMeta(interaction)
+				);
+				return interaction.reply({
+					content: "Please add the bot before running this command",
 					ephemeral: true,
 				});
-				return;
 			}
 
+			const { guild } = interaction;
+
 			if (guild.me == null) {
-				log.warn("Was not able to find bot user in guild");
+				log.warn(
+					`Was not able to find bot user in guild ${interaction.guildId}`
+				);
 				await interaction.reply({
 					content: "I wasn't able to find myself in this guild!",
 					ephemeral: true,
@@ -50,6 +55,7 @@ export default async ({ bot }: CommandArgs) => {
 				return;
 			}
 
+			deleteCounter.inc();
 			const targetId = BigInt(
 				interaction.customId.substring(DELETE_BUTTON_PREFIX.length + 1)
 			);
@@ -114,7 +120,10 @@ export default async ({ bot }: CommandArgs) => {
 			const deleted = await target.delete();
 
 			if (!deleted) {
-				log.warn("Unable to delete message");
+				log.warn(
+					`Unable to delete message ${targetId}`,
+					getInteractionMeta(interaction)
+				);
 				await interaction.editReply({
 					content: "Sorry, I wasn't able to delete that message.",
 				});

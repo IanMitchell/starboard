@@ -9,10 +9,7 @@ const log = getLogger("star");
 const messageSemaphores = new Set();
 
 export default async ({ bot }: CommandArgs) => {
-	log.debug("I am running");
-
 	bot.on("messageReactionRemove", async (reaction, user) => {
-		log.debug("Removing reaction");
 		if (
 			reaction.emoji.name !== "⭐" ||
 			reaction.message.guildId === null ||
@@ -24,7 +21,7 @@ export default async ({ bot }: CommandArgs) => {
 		const guildId = BigInt(reaction.message.guildId);
 		const userId = BigInt(user.id);
 
-		log.info(`Decrementing star tracker`, {
+		log.info(`Decrementing star tracker for ${userId} in ${guildId}`, {
 			guildId,
 			userId,
 		});
@@ -77,10 +74,6 @@ export default async ({ bot }: CommandArgs) => {
 			userId,
 			count,
 		});
-
-		if (count === 0) {
-			log.warn("Reaction count 0");
-		}
 
 		await bot.database.starCount.upsert({
 			create: {

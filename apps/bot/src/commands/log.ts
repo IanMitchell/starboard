@@ -33,29 +33,26 @@ export default async ({ bot }: CommandArgs) => {
 		}
 
 		if (!interaction.inCachedGuild()) {
-			log.warn("Handled an interaction in a non-cached guild");
-			await interaction.reply({
+			log.warn(
+				`Handled an interaction in a non-cached guild ${
+					interaction.guildId ?? "[unknown]"
+				}`,
+				getInteractionMeta(interaction)
+			);
+			return interaction.reply({
 				content: "Please add the bot before running this command",
 				ephemeral: true,
 			});
-			return;
 		}
 
 		logCounter.inc();
-		log.info("Setting new log channel", getInteractionMeta(interaction));
-
 		const target = await interaction.options
 			.getChannel("channel", true)
 			.fetch();
-
-		if (interaction.guild?.id == null) {
-			log.warn("Unable to find Guild");
-			await interaction.reply({
-				content: "I wasn't about to find a guild for this command!",
-				ephemeral: true,
-			});
-			return;
-		}
+		log.info(
+			`Setting log channel to ${target.id} in ${interaction.guildId}`,
+			getInteractionMeta(interaction)
+		);
 
 		if (!target.isText()) {
 			await interaction.reply({

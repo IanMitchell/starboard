@@ -15,6 +15,8 @@ const log = getLogger("server");
 void server.register(shieldRoutes);
 
 server.get("/metrics", async (request, response) => {
+	log.info("Responding to metrics request");
+
 	try {
 		const metrics = await register.metrics();
 		const databaseMetrics = await database.$metrics.prometheus();

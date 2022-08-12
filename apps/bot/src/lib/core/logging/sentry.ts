@@ -1,4 +1,5 @@
 import Sentry from "@sentry/node";
+import Tracing from "@sentry/tracing";
 import { CaptureContext } from "@sentry/types";
 import { DMChannel, Interaction, Message } from "discord.js";
 import { Histogram } from "prom-client";
@@ -22,6 +23,7 @@ function getSentry() {
 		Sentry.init({
 			dsn: process.env.SENTRY,
 			release: process.env.GIT_HASH,
+			integrations: [new Sentry.Integrations.Http({ tracing: true })],
 		});
 	}
 

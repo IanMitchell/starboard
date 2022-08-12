@@ -32,19 +32,29 @@ export default async ({ bot }: CommandArgs) => {
 		}
 
 		if (!interaction.inCachedGuild()) {
-			log.warn("Handled an interaction in a non-cached guild");
-			await interaction.reply({
+			log.warn(
+				`Handled an interaction in a non-cached guild ${
+					interaction.guildId ?? "[unknown]"
+				}`,
+				getInteractionMeta(interaction)
+			);
+			return interaction.reply({
 				content: "Please add the bot before running this command",
 				ephemeral: true,
 			});
-			return;
 		}
 
 		unignoreCounter.inc();
-		log.info("Unignoring message", getInteractionMeta(interaction));
+		log.info(
+			`Unignoring message ${interaction.targetId}`,
+			getInteractionMeta(interaction)
+		);
 
 		if (interaction.guild?.id == null) {
-			log.warn("Unable to find Guild");
+			log.warn(
+				`Unable to find guild ${interaction.guildId}`,
+				getInteractionMeta(interaction)
+			);
 			await interaction.reply({
 				content: "I wasn't about to find a guild for this command!",
 				ephemeral: true,
@@ -56,7 +66,10 @@ export default async ({ bot }: CommandArgs) => {
 		const message = await messages.fetchInteractionMessage(interaction);
 
 		if (message == null) {
-			log.warn("Unable to find message");
+			log.warn(
+				`Unable to find message ${interaction.targetId}`,
+				getInteractionMeta(interaction)
+			);
 			await interaction.editReply({
 				content: "I wasn't about to find the target message!",
 			});
