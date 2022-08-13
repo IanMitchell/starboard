@@ -1,4 +1,5 @@
 import Sentry from "@sentry/node";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import Tracing from "@sentry/tracing";
 import { CaptureContext } from "@sentry/types";
 import { DMChannel, Interaction, Message } from "discord.js";
@@ -22,7 +23,7 @@ function getSentry() {
 	if (process.env.NODE_ENV === "production") {
 		Sentry.init({
 			dsn: process.env.SENTRY,
-			release: process.env.GIT_HASH,
+			release: process.env.RAILWAY_GIT_COMMIT_SHA,
 			integrations: [new Sentry.Integrations.Http({ tracing: true })],
 		});
 	}

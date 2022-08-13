@@ -35,7 +35,7 @@ server.get("/metrics", async (request, response) => {
 
 export default (async () => {
 	try {
-		const port = process.env.SERVER_PORT ?? 3030;
+		const port = process.env.SERVER_PORT ?? 3000;
 		log.info(`Listening on localhost:${port}`);
 		await server.listen(port, "0.0.0.0");
 	} catch (err: unknown) {

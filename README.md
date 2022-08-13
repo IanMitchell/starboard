@@ -1,3 +1,7 @@
 # Starboard Bot
 
-im a bot
+TODO:
+
+- update to djs 14
+- npm outdated
+- Write README
