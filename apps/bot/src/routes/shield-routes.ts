@@ -50,9 +50,7 @@ export default function shieldRoutes(
 	server.get("/shields/stars", async (request, response) => {
 		log.info("Stars requested");
 		const value = await getTotalStarCount();
-		return response.send(
-			createShield("Starboard Reactions", value.toLocaleString())
-		);
+		return response.send(createShield("Reactions", value.toLocaleString()));
 	});
 
 	done();
