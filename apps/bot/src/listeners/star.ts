@@ -21,10 +21,13 @@ export default async ({ bot }: CommandArgs) => {
 		const guildId = BigInt(reaction.message.guildId);
 		const userId = BigInt(user.id);
 
-		log.info(`Decrementing star tracker for ${userId} in ${guildId}`, {
-			guildId,
-			userId,
-		});
+		log.info(
+			`Decrementing star tracker for ${userId.toString()} in ${guildId.toString()}`,
+			{
+				guildId,
+				userId,
+			}
+		);
 
 		await bot.database.starCount.upsert({
 			create: {
@@ -54,9 +57,8 @@ export default async ({ bot }: CommandArgs) => {
 		const reaction = raw.partial ? await raw.fetch() : raw;
 		const user = rawUser.partial ? await rawUser.fetch() : rawUser;
 
-		log.debug("Handling new reaction", getReactionMeta(reaction, user));
-
 		if (reaction.message.guildId === null || reaction.message.author == null) {
+			log.warn("Unable to find reaction information");
 			return;
 		}
 
@@ -67,13 +69,16 @@ export default async ({ bot }: CommandArgs) => {
 		const authorId = BigInt(reaction.message.author.id);
 		const count = reaction.count ?? 0;
 
-		log.info(`Processing star reaction for message ${reaction.message.id}`, {
-			guildId,
-			channelId,
-			messageId,
-			userId,
-			count,
-		});
+		log.info(
+			`Processing star reaction by ${user.id} on message ${reaction.message.id}`,
+			{
+				guildId: guildId.toString(),
+				channelId: channelId.toString(),
+				messageId: messageId.toString(),
+				userId: userId.toString(),
+				count,
+			}
+		);
 
 		await bot.database.starCount.upsert({
 			create: {
@@ -104,7 +109,7 @@ export default async ({ bot }: CommandArgs) => {
 		});
 
 		if (blocked != null) {
-			log.info(`Message ${messageId} is blocked`);
+			log.info(`Message ${messageId.toString()} is blocked`);
 			return;
 		}
 
@@ -136,7 +141,9 @@ export default async ({ bot }: CommandArgs) => {
 		});
 
 		if (message != null) {
-			log.info("Message already exists, updating count", { messageId });
+			log.info("Message already exists, updating count", {
+				messageId: messageId.toString(),
+			});
 			await bot.database.message.update({
 				data: {
 					count,

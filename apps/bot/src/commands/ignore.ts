@@ -25,8 +25,6 @@ export const command = new ContextMenuCommandBuilder()
 
 export default async ({ bot }: CommandArgs) => {
 	bot.onContextMenuCommand(command, async (interaction) => {
-		log.info("Handler");
-
 		if (!interaction.isMessageContextMenu()) {
 			log.warn(
 				"Handled a non-message context menu interaction",

@@ -33,17 +33,7 @@ export default async ({ bot }: CommandArgs) => {
 			});
 		}
 
-		if (interaction.guild?.id == null) {
-			log.warn("Unable to find Guild");
-			await interaction.reply({
-				content: "I wasn't about to find a guild for this command!",
-				ephemeral: true,
-			});
-			return;
-		}
-
 		leaderboardCounter.inc();
-
 		log.info(
 			`Showing leaderboard for ${interaction.guildId}`,
 			getInteractionMeta(interaction)

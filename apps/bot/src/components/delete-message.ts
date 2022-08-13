@@ -59,7 +59,10 @@ export default async ({ bot }: CommandArgs) => {
 			const targetId = BigInt(
 				interaction.customId.substring(DELETE_BUTTON_PREFIX.length + 1)
 			);
-			log.info(`Deleting message ${targetId}`, getInteractionMeta(interaction));
+			log.info(
+				`Deleting message ${targetId.toString()}`,
+				getInteractionMeta(interaction)
+			);
 
 			await interaction.deferReply({ ephemeral: true });
 			const message = await bot.database.message.findUnique({
@@ -121,7 +124,7 @@ export default async ({ bot }: CommandArgs) => {
 
 			if (!deleted) {
 				log.warn(
-					`Unable to delete message ${targetId}`,
+					`Unable to delete message ${targetId.toString()}`,
 					getInteractionMeta(interaction)
 				);
 				await interaction.editReply({
