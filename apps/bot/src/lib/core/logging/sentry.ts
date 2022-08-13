@@ -1,9 +1,9 @@
 import Sentry from "@sentry/node";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import Tracing from "@sentry/tracing";
 import { CaptureContext } from "@sentry/types";
 import { DMChannel, Interaction, Message } from "discord.js";
 import { Histogram } from "prom-client";
+import database from "../database";
 import { getError } from "../node/error";
 
 const errorHistogram = new Histogram({
@@ -24,7 +24,10 @@ function getSentry() {
 		Sentry.init({
 			dsn: process.env.SENTRY,
 			release: process.env.RAILWAY_GIT_COMMIT_SHA,
-			integrations: [new Sentry.Integrations.Http({ tracing: true })],
+			integrations: [
+				new Tracing.Integrations.Prisma({ client: database }),
+				new Sentry.Integrations.Http({ tracing: true }),
+			],
 		});
 	}
 
