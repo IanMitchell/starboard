@@ -124,7 +124,7 @@ export default async ({ bot }: CommandArgs) => {
 		});
 
 		// Guild isn't fully setup yet
-		if (settings == null) {
+		if (settings == null || settings.log == null) {
 			return;
 		}
 
