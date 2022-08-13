@@ -1,4 +1,4 @@
-import Sentry from "@sentry/node";
+import * as Sentry from "@sentry/node";
 import * as Tracing from "@sentry/tracing";
 import { CaptureContext } from "@sentry/types";
 import { DMChannel, Interaction, Message } from "discord.js";
