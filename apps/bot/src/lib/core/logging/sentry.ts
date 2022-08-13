@@ -1,5 +1,5 @@
 import Sentry from "@sentry/node";
-import Tracing from "@sentry/tracing";
+import * as Tracing from "@sentry/tracing";
 import { CaptureContext } from "@sentry/types";
 import { DMChannel, Interaction, Message } from "discord.js";
 import { Histogram } from "prom-client";
