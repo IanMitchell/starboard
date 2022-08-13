@@ -180,17 +180,17 @@ export default async ({ bot }: CommandArgs) => {
 			return;
 		}
 
-		let posted = null;
+		let postId = null;
 
 		try {
-			posted = await createWebhookMessage(channel, targetMessage);
+			postId = await createWebhookMessage(channel, targetMessage);
 		} catch (err: unknown) {
 			const error = getError(err);
 			log.error(error.message, { error });
 			Sentry.captureException(error);
 		}
 
-		if (posted != null) {
+		if (postId != null) {
 			await bot.database.message.create({
 				data: {
 					messageId,
@@ -198,7 +198,7 @@ export default async ({ bot }: CommandArgs) => {
 					guildId,
 					userId: authorId,
 					count,
-					crosspostId: BigInt(posted.id),
+					crosspostId: BigInt(postId),
 				},
 			});
 		}

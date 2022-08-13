@@ -53,5 +53,5 @@ export async function createWebhookMessage(
 
 	await webhook.delete();
 
-	return post;
+	return post.id;
 }
