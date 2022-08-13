@@ -28,6 +28,7 @@ function getSentry() {
 				new Tracing.Integrations.Prisma({ client: database }),
 				new Sentry.Integrations.Http({ tracing: true }),
 			],
+			tracesSampleRate: 1.0,
 		});
 	}
 
