@@ -192,7 +192,7 @@ export default async ({ bot }: CommandArgs) => {
 				},
 			});
 
-			await interaction.reply({
+			await interaction.editReply({
 				content: `I've added ${target.toString()} to the starboard!`,
 			});
 		}
@@ -247,7 +247,7 @@ export default async ({ bot }: CommandArgs) => {
 				},
 			});
 
-			await interaction.reply({
+			await interaction.editReply({
 				content: `I've hidden ${target.toString()} from the starboard!`,
 			});
 		}
@@ -283,7 +283,7 @@ export default async ({ bot }: CommandArgs) => {
 				},
 			});
 
-			await interaction.reply({
+			await interaction.editReply({
 				content: `I've removed custom settings for ${target.toString()}`,
 			});
 		}
