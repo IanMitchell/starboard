@@ -114,19 +114,27 @@ export default async ({ bot }: CommandArgs) => {
 				"These are the channels I am ignoring and listening to. Any channel that isn't visible to the @everyone role is ignored by default."
 			);
 			embed.setColor(0xfee75c);
+
+			const watchedChannels = channelSettings
+				.filter((channel) => channel.visible)
+				.map((channel) => channel.toString)
+				.join("\n");
+
 			embed.addField(
 				"Watched Channels",
-				channelSettings
-					.filter((channel) => channel.visible)
-					.map((channel) => channel.toString)
-					.join("\n")
+				// eslint-disable-next-line no-negated-condition
+				watchedChannels !== "" ? watchedChannels : "_None_"
 			);
+
+			const ignoredChannels = channelSettings
+				.filter((channel) => !channel.visible)
+				.map((channel) => channel.toString)
+				.join("\n");
+
 			embed.addField(
 				"Ignored Channels",
-				channelSettings
-					.filter((channel) => !channel.visible)
-					.map((channel) => channel.toString)
-					.join("\n")
+				// eslint-disable-next-line no-negated-condition
+				ignoredChannels !== "" ? ignoredChannels : "_None_"
 			);
 
 			await interaction.editReply({
