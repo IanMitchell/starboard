@@ -3,18 +3,30 @@ import { CommandArgs } from "../typedefs";
 import getLogger, { getReactionMeta } from "../lib/core/logging";
 import { isPublicTextChannel } from "../lib/core/discord/text-channels";
 import { getError } from "../lib/core/node/error";
+import client from "prom-client";
 import Sentry from "../lib/core/logging/sentry";
 
 const log = getLogger("star");
 const messageSemaphores = new Set();
 
+const starHistorgram = new client.Histogram({
+	name: "star_count",
+	help: "A histogram of star reactions",
+});
+
 export default async ({ bot }: CommandArgs) => {
-	bot.on("messageReactionRemove", async (reaction, user) => {
+	bot.on("messageReactionRemove", async (rawReaction, rawUser) => {
 		if (
-			reaction.emoji.name !== "⭐" ||
-			reaction.message.guildId === null ||
-			reaction.message.author === user
+			rawReaction.emoji.name !== "⭐" ||
+			rawReaction.message.guildId === null ||
+			rawReaction.message.author?.id === rawUser?.id
 		) {
+			return;
+		}
+
+		const reaction = await rawReaction.fetch();
+		const user = await rawUser.fetch();
+		if (reaction.message.guildId == null) {
 			return;
 		}
 
@@ -23,10 +35,7 @@ export default async ({ bot }: CommandArgs) => {
 
 		log.info(
 			`Decrementing star tracker for ${userId.toString()} in ${guildId.toString()}`,
-			{
-				guildId,
-				userId,
-			}
+			getReactionMeta(reaction, user)
 		);
 
 		await bot.database.starCount.upsert({
@@ -62,6 +71,7 @@ export default async ({ bot }: CommandArgs) => {
 			return;
 		}
 
+		starHistorgram.observe(1);
 		const guildId = BigInt(reaction.message.guildId);
 		const channelId = BigInt(reaction.message.channelId);
 		const messageId = BigInt(reaction.message.id);
@@ -71,13 +81,7 @@ export default async ({ bot }: CommandArgs) => {
 
 		log.info(
 			`Processing star reaction by ${user.id} on message ${reaction.message.id}`,
-			{
-				guildId: guildId.toString(),
-				channelId: channelId.toString(),
-				messageId: messageId.toString(),
-				userId: userId.toString(),
-				count,
-			}
+			getReactionMeta(reaction, user)
 		);
 
 		await bot.database.starCount.upsert({
