@@ -5,10 +5,10 @@
 </p> -->
 
 <p align="center">
-  <img src="https://img.shields.io/endpoint?url=https://bot.starboard.social/shield/users">
-  <img src="https://img.shields.io/endpoint?url=https://bot.starboard.social/shield/guilds">
-  <img src="https://img.shields.io/endpoint?url=https://bot.starboard.social/shield/stars">
-  <img src="https://img.shields.io/endpoint?url=https://bot.starboard.social/shield/messages">
+  <img src="https://img.shields.io/endpoint?url=https://bot.starboard.social/shields/users">
+  <img src="https://img.shields.io/endpoint?url=https://bot.starboard.social/shields/guilds">
+  <img src="https://img.shields.io/endpoint?url=https://bot.starboard.social/shields/stars">
+  <img src="https://img.shields.io/endpoint?url=https://bot.starboard.social/shields/messages">
 </p>
 
 ---
