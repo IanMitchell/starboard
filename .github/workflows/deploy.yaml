@@ -27,7 +27,7 @@ jobs:
         run: npm run db:deploy
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-          DATABASE_URL: ${{ secrets.RAILWAY_DATABASE }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
       - name: Deploy
         run: railway up
