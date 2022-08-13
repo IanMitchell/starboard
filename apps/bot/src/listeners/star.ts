@@ -158,7 +158,7 @@ export default async ({ bot }: CommandArgs) => {
 			settings.log.toString()
 		);
 
-		if (channel == null || !channel.isText()) {
+		if (channel == null || !channel.isText() || channel.isVoice()) {
 			return;
 		}
 
