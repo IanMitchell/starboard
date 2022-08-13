@@ -23,10 +23,11 @@ jobs:
       - name: Install Railway
         run: npm i -g @railway/cli
 
-      - name: Databas Deploy
+      - name: Database Deploy
         run: npm run db:deploy
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          DATABASE_URL: ${{ secrets.RAILWAY_DATABASE }}
 
       - name: Deploy
         run: railway up
