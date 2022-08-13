@@ -7,6 +7,7 @@ import { CommandInteraction, MessageEmbed, Permissions } from "discord.js";
 import { Counter } from "prom-client";
 import { CommandArgs } from "../typedefs";
 import getLogger, { getInteractionMeta } from "../lib/core/logging";
+import { ChannelType } from "discord-api-types/v10";
 
 const log = getLogger("channel");
 
@@ -44,6 +45,15 @@ const addCommand = new SlashCommandSubcommandBuilder()
 			.setName("channel")
 			.setDescription("The channel to add")
 			.setRequired(true)
+			.addChannelTypes(
+				// ChannelType.GuildForum,
+				ChannelType.GuildNews,
+				ChannelType.GuildNewsThread,
+				ChannelType.GuildPrivateThread,
+				ChannelType.GuildPublicThread,
+				ChannelType.GuildText,
+				ChannelType.GuildVoice
+			)
 	);
 
 const removeCommand = new SlashCommandSubcommandBuilder()
@@ -54,6 +64,15 @@ const removeCommand = new SlashCommandSubcommandBuilder()
 			.setName("channel")
 			.setDescription("The channel to remove")
 			.setRequired(true)
+			.addChannelTypes(
+				// ChannelType.GuildForum,
+				ChannelType.GuildNews,
+				ChannelType.GuildNewsThread,
+				ChannelType.GuildPrivateThread,
+				ChannelType.GuildPublicThread,
+				ChannelType.GuildText,
+				ChannelType.GuildVoice
+			)
 	);
 
 const resetCommand = new SlashCommandSubcommandBuilder()
@@ -66,6 +85,15 @@ const resetCommand = new SlashCommandSubcommandBuilder()
 			.setName("channel")
 			.setDescription("The channel to reset")
 			.setRequired(true)
+			.addChannelTypes(
+				// ChannelType.GuildForum,
+				ChannelType.GuildNews,
+				ChannelType.GuildNewsThread,
+				ChannelType.GuildPrivateThread,
+				ChannelType.GuildPublicThread,
+				ChannelType.GuildText,
+				ChannelType.GuildVoice
+			)
 	);
 
 const viewCommand = new SlashCommandSubcommandBuilder()
