@@ -3,14 +3,19 @@ import path from "node:path";
 import fs from "node:fs";
 import {
 	AutocompleteInteraction,
+	ButtonComponent,
+	ChatInputCommandInteraction,
 	Client,
 	CommandInteraction,
-	ContextMenuInteraction,
-	Intents,
+	ContextMenuCommandInteraction,
+	IntentsBitField,
 	Interaction,
-	MessageButton,
+	InteractionType,
 	MessageComponentInteraction,
-	MessageSelectMenu,
+	MessageContextMenuCommandInteraction,
+	Partials,
+	SelectMenuComponent,
+	UserContextMenuCommandInteraction,
 } from "discord.js";
 import { getDirname } from "./lib/core/node/files";
 import {
@@ -47,10 +52,17 @@ const interactionCounter = new Counter({
 
 export class Application extends Client {
 	public readonly database: PrismaClient;
-	public readonly slashCommands: Map<string, BotCommand<CommandInteraction>>;
+	public readonly slashCommands: Map<
+		string,
+		BotCommand<ChatInputCommandInteraction>
+	>;
+
 	public readonly contextMenuCommands: Map<
 		string,
-		BotCommand<ContextMenuInteraction, [ContextMenuCommandBuilder]>
+		BotCommand<
+			UserContextMenuCommandInteraction | MessageContextMenuCommandInteraction,
+			[ContextMenuCommandBuilder]
+		>
 	>;
 
 	public readonly autocompleteHandlers: Map<
@@ -64,14 +76,14 @@ export class Application extends Client {
 		log.info("Booting up...");
 		super({
 			intents: [
-				Intents.FLAGS.GUILDS,
-				Intents.FLAGS.GUILD_MEMBERS,
-				Intents.FLAGS.GUILD_WEBHOOKS,
-				Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
-				Intents.FLAGS.GUILD_MESSAGES,
+				IntentsBitField.Flags.Guilds,
+				IntentsBitField.Flags.GuildMembers,
+				IntentsBitField.Flags.GuildWebhooks,
+				IntentsBitField.Flags.GuildMessageReactions,
+				IntentsBitField.Flags.GuildMessages,
 			],
 			allowedMentions: { parse: ["users"] },
-			partials: ["GUILD_MEMBER", "MESSAGE", "REACTION"],
+			partials: [Partials.GuildMember, Partials.Message, Partials.Reaction],
 		});
 
 		this.database = database;
@@ -204,73 +216,93 @@ export class Application extends Client {
 			name: "Interaction",
 		});
 
-		if (interaction.isCommand()) {
-			const key = getSerializedCommandInteractionKey(interaction);
-
-			if (this.slashCommands.has(key)) {
-				try {
-					await this.slashCommands.get(key)?.handler(interaction);
-				} catch (err: unknown) {
-					const error = getError(err);
-					log.error(error.message, getInteractionMeta(interaction));
-					Sentry.captureException(error);
+		switch (interaction.type) {
+			case InteractionType.ApplicationCommand: {
+				if (interaction.isChatInputCommand()) {
+					const key = getSerializedCommandInteractionKey(interaction);
+					if (this.slashCommands.has(key)) {
+						try {
+							await this.slashCommands.get(key)?.handler(interaction);
+						} catch (err: unknown) {
+							const error = getError(err);
+							log.error(error.message, getInteractionMeta(interaction));
+							Sentry.captureException(error);
+						}
+					} else {
+						log.error(
+							`Unknown command interaction: ${key}`,
+							getInteractionMeta(interaction)
+						);
+					}
+				} else if (interaction.isContextMenuCommand()) {
+					if (this.contextMenuCommands.has(interaction.commandName)) {
+						try {
+							await this.contextMenuCommands
+								.get(interaction.commandName)
+								?.handler(interaction);
+						} catch (err: unknown) {
+							const error = getError(err);
+							log.error(error.message, getInteractionMeta(interaction));
+							Sentry.captureException(error);
+						}
+					} else {
+						log.error(
+							`Unknown context menu interaction: ${interaction.commandName}`,
+							getInteractionMeta(interaction)
+						);
+					}
 				}
-			} else {
-				log.error(
-					`Unknown command interaction: ${key}`,
-					getInteractionMeta(interaction)
-				);
-			}
-		} else if (interaction.isMessageComponent()) {
-			if (!this.messageComponents.has(interaction.customId)) {
-				log.error(
-					`Unknown component interaction: ${interaction.customId}`,
-					getInteractionMeta(interaction)
-				);
-				transaction.finish();
-				return;
+
+				break;
 			}
 
-			try {
-				await this.messageComponents
-					.get(interaction.customId)
-					?.handler(interaction);
-			} catch (err: unknown) {
-				const error = getError(err);
-				log.error(error.message, getInteractionMeta(interaction));
-				Sentry.captureException(error);
-			}
-		} else if (interaction.isContextMenu()) {
-			if (this.contextMenuCommands.has(interaction.commandName)) {
+			case InteractionType.MessageComponent: {
+				if (!this.messageComponents.has(interaction.customId)) {
+					log.error(
+						`Unknown component interaction: ${interaction.customId}`,
+						getInteractionMeta(interaction)
+					);
+					transaction.finish();
+					return;
+				}
+
 				try {
-					await this.contextMenuCommands
-						.get(interaction.commandName)
+					await this.messageComponents
+						.get(interaction.customId)
 						?.handler(interaction);
 				} catch (err: unknown) {
 					const error = getError(err);
 					log.error(error.message, getInteractionMeta(interaction));
 					Sentry.captureException(error);
 				}
-			} else {
-				log.error(
-					`Unknown context menu interaction: ${interaction.commandName}`,
-					getInteractionMeta(interaction)
-				);
-			}
-		} else if (interaction.isAutocomplete()) {
-			const key = getSerializedCommandInteractionKey(interaction);
 
-			if (this.autocompleteHandlers.has(key)) {
-				try {
-					await this.autocompleteHandlers.get(key)?.handler(interaction);
-				} catch (err: unknown) {
-					const error = getError(err);
-					log.error(error.message, getInteractionMeta(interaction));
-					Sentry.captureException(error);
+				break;
+			}
+
+			case InteractionType.ApplicationCommandAutocomplete: {
+				const key = getSerializedCommandInteractionKey(interaction);
+
+				if (this.autocompleteHandlers.has(key)) {
+					try {
+						await this.autocompleteHandlers.get(key)?.handler(interaction);
+					} catch (err: unknown) {
+						const error = getError(err);
+						log.error(error.message, getInteractionMeta(interaction));
+						Sentry.captureException(error);
+					}
+				} else {
+					log.error(
+						`Unknown autocomplete interaction: ${key}`,
+						getInteractionMeta(interaction)
+					);
 				}
-			} else {
+
+				break;
+			}
+
+			default: {
 				log.error(
-					`Unknown autocomplete interaction: ${key}`,
+					`Unknown Interaction Type ${interaction.type}`,
 					getInteractionMeta(interaction)
 				);
 			}
@@ -281,7 +313,7 @@ export class Application extends Client {
 
 	onSlashCommand(
 		command: SlashCommandBuilderDefinition,
-		handler: ActionHandler<CommandInteraction>
+		handler: ActionHandler<ChatInputCommandInteraction>
 	) {
 		this.slashCommands.set(getSlashCommandKey(command), {
 			commands: Array.isArray(command) ? command : [command],
@@ -291,7 +323,7 @@ export class Application extends Client {
 
 	onContextMenuCommand(
 		command: ContextMenuCommandBuilder,
-		handler: ActionHandler<ContextMenuInteraction>
+		handler: ActionHandler<ContextMenuCommandInteraction>
 	) {
 		this.contextMenuCommands.set(command.name, {
 			commands: [command],
@@ -310,7 +342,7 @@ export class Application extends Client {
 	}
 
 	onMessageComponent(
-		component: MessageButton | MessageSelectMenu,
+		component: ButtonComponent | SelectMenuComponent,
 		handler: ActionHandler<MessageComponentInteraction>
 	) {
 		if (component.customId != null) {

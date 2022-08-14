@@ -6,6 +6,7 @@ import {
 	PartialDMChannel,
 	MessageReaction,
 	User,
+	BaseInteraction,
 } from "discord.js";
 
 export function getChannelMeta(
@@ -25,11 +26,7 @@ export function getChannelMeta(
 		return meta;
 	}
 
-	/**
-	 * TODO: In v14, switch to:
-	 * channel.type !== Constants.ChannelTypes.DM
-	 */
-	if (channel.isText() && !(channel instanceof DMChannel)) {
+	if (channel.isTextBased() && !channel.isDMBased()) {
 		meta.name = channel.name;
 	}
 
@@ -53,7 +50,7 @@ export function getMessageMeta(message: Message): Record<string, unknown> {
 }
 
 export function getInteractionMeta(
-	interaction: Interaction
+	interaction: BaseInteraction
 ): Record<string, unknown> {
 	const meta: Record<string, unknown> = {
 		guild: {
@@ -77,7 +74,7 @@ export function getInteractionMeta(
 		}));
 	}
 
-	if (interaction.isContextMenu()) {
+	if (interaction.isContextMenuCommand()) {
 		meta.type = "contextMenu";
 	}
 

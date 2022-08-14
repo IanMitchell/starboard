@@ -48,7 +48,7 @@ function getSentry() {
 					scope.setExtra("Channel Type", message.channel.type);
 
 					if (
-						message.channel.isText() &&
+						message.channel.isTextBased() &&
 						!message.channel.partial &&
 						!(message.channel instanceof DMChannel)
 					) {
@@ -83,7 +83,7 @@ function getSentry() {
 					scope.setExtra("Channel Type", interaction.channel.type);
 
 					if (
-						interaction.channel.isText() &&
+						interaction.channel.isTextBased() &&
 						!interaction.channel.partial &&
 						!(interaction.channel instanceof DMChannel)
 					) {

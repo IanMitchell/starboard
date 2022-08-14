@@ -1,9 +1,9 @@
-import { Message, MessageContextMenuInteraction } from "discord.js";
+import { Message, MessageContextMenuCommandInteraction } from "discord.js";
 import bot from "../../bot";
 import database from "../core/database";
 
 export async function fetchInteractionMessage(
-	interaction: MessageContextMenuInteraction
+	interaction: MessageContextMenuCommandInteraction
 ) {
 	const { guildId, channelId } = interaction;
 	const messageId = interaction.targetMessage.id;
@@ -15,7 +15,7 @@ export async function fetchInteractionMessage(
 	const guild = await bot.guilds.fetch(guildId);
 	const channel = await guild.channels.fetch(channelId);
 
-	if (!channel?.isText()) {
+	if (!channel?.isTextBased()) {
 		return null;
 	}
 

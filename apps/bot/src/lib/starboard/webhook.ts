@@ -1,20 +1,22 @@
 import { ButtonBuilder } from "@discordjs/builders";
 import { ButtonStyle } from "discord-api-types/v10";
 import {
+	ActionRowBuilder,
 	Message,
-	MessageActionRow,
 	NewsChannel,
 	TextChannel,
+	VoiceChannel,
 	WebhookMessageOptions,
 } from "discord.js";
 
 export async function createWebhookMessage(
-	channel: TextChannel | NewsChannel,
+	channel: TextChannel | NewsChannel | VoiceChannel,
 	message: Message
 ) {
-	const webhook = await channel.createWebhook(message.author.username, {
+	const webhook = await channel.createWebhook({
+		name: message.author.username,
 		avatar: message.author.avatarURL({
-			format: "png",
+			extension: "png",
 		}),
 	});
 
@@ -22,8 +24,7 @@ export async function createWebhookMessage(
 		.setStyle(ButtonStyle.Link)
 		.setURL(message.url)
 		.setEmoji({ name: "🔗" })
-		.setLabel("View Original")
-		.toJSON();
+		.setLabel("View Original");
 
 	const attachments = [...message.attachments.values()];
 
@@ -47,7 +48,7 @@ export async function createWebhookMessage(
 
 	const post = await webhook.send({
 		...webhookMessage,
-		components: [new MessageActionRow().addComponents(link)],
+		components: [new ActionRowBuilder<ButtonBuilder>().addComponents(link)],
 		allowedMentions: {},
 	});
 

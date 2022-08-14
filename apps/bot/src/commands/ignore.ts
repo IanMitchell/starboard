@@ -1,7 +1,11 @@
 import { ContextMenuCommandBuilder } from "@discordjs/builders";
 import { ApplicationCommandType } from "discord-api-types/v10";
 import * as messages from "../lib/starboard/messages";
-import { MessageActionRow, Permissions } from "discord.js";
+import {
+	ActionRowBuilder,
+	ButtonBuilder,
+	PermissionFlagsBits,
+} from "discord.js";
 import { Counter } from "prom-client";
 import { CommandArgs } from "../typedefs";
 import getLogger, { getInteractionMeta } from "../lib/core/logging";
@@ -20,12 +24,12 @@ const ignoreCounter = new Counter({
 export const command = new ContextMenuCommandBuilder()
 	.setType(ApplicationCommandType.Message)
 	.setName("Ignore")
-	.setDefaultMemberPermissions(Permissions.FLAGS.MANAGE_GUILD)
+	.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
 	.setDMPermission(false);
 
 export default async ({ bot }: CommandArgs) => {
 	bot.onContextMenuCommand(command, async (interaction) => {
-		if (!interaction.isMessageContextMenu()) {
+		if (!interaction.isMessageContextMenuCommand()) {
 			log.warn(
 				"Handled a non-message context menu interaction",
 				getInteractionMeta(interaction)
@@ -108,9 +112,9 @@ export default async ({ bot }: CommandArgs) => {
 				);
 
 				canDelete = channel
-					? message.guild?.me
+					? message.guild?.members?.me
 							?.permissionsIn(channel)
-							.has(Permissions.FLAGS.MANAGE_MESSAGES) ?? false
+							.has(PermissionFlagsBits.ManageMessages) ?? false
 					: false;
 			}
 
@@ -122,7 +126,9 @@ export default async ({ bot }: CommandArgs) => {
 				await interaction.editReply({
 					content:
 						"The message has been ignored, but it already exists on the starboard. Should it be deleted?",
-					components: [new MessageActionRow().addComponents([button.toJSON()])],
+					components: [
+						new ActionRowBuilder<ButtonBuilder>().addComponents(button),
+					],
 				});
 			} else {
 				await interaction.editReply({

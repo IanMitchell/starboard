@@ -2,7 +2,7 @@ import {
 	SlashCommandBuilder,
 	SlashCommandChannelOption,
 } from "@discordjs/builders";
-import { Permissions } from "discord.js";
+import { PermissionFlagsBits, Permissions } from "discord.js";
 import { Counter } from "prom-client";
 import { CommandArgs } from "../typedefs";
 import getLogger, { getInteractionMeta } from "../lib/core/logging";
@@ -18,7 +18,7 @@ const logCounter = new Counter({
 export const command = new SlashCommandBuilder()
 	.setName("log")
 	.setDescription("Set the channel the bot will post starred messages to")
-	.setDefaultMemberPermissions(Permissions.FLAGS.MANAGE_GUILD)
+	.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
 	.setDMPermission(false)
 	.addChannelOption(
 		new SlashCommandChannelOption()
@@ -56,7 +56,7 @@ export default async ({ bot }: CommandArgs) => {
 			getInteractionMeta(interaction)
 		);
 
-		if (!target.isText()) {
+		if (!target.isTextBased()) {
 			await interaction.reply({
 				content: "Please choose a text or announcement channel",
 				ephemeral: true,
@@ -84,7 +84,8 @@ export default async ({ bot }: CommandArgs) => {
 			!target
 				.permissionsFor(member)
 				.has(
-					Permissions.FLAGS.MANAGE_MESSAGES | Permissions.FLAGS.MANAGE_WEBHOOKS
+					PermissionFlagsBits.ManageMessages |
+						PermissionFlagsBits.ManageWebhooks
 				)
 		) {
 			await interaction.editReply({

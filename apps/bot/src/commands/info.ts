@@ -3,7 +3,7 @@ import { Counter } from "prom-client";
 import { CommandArgs } from "../typedefs";
 import getLogger, { getInteractionMeta } from "../lib/core/logging";
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { MessageEmbed } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import {
 	getTotalGuildCount,
 	getTotalMemberCount,
@@ -63,16 +63,18 @@ export default async ({ bot }: CommandArgs) => {
 
 		const uptime = formatDistance(new Date(), Date.now() - (bot.uptime ?? 0));
 
-		const embed = new MessageEmbed()
+		const embed = new EmbedBuilder()
 			.setTitle("Starboard Info")
 			.setColor(0xfee75c)
 			.setURL("https://starboard.social")
 			.setDescription(
 				`I listen for ⭐️ reactions and repost the best messages to a starboard channel! Source available on [GitHub](https://github.com/ianmitchell/starboard).`
 			)
-			.setThumbnail(bot.user.displayAvatarURL({ format: "png" }))
-			.addField("Stats", stats.join("\n"), true)
-			.addField("Uptime", uptime, true)
+			.setThumbnail(bot.user.displayAvatarURL({ extension: "png" }))
+			.addFields([
+				{ name: "Stats", value: stats.join("\n"), inline: true },
+				{ name: "Uptime", value: uptime, inline: true },
+			])
 			.setImage(
 				"https://cdn.discordapp.com/attachments/852975798255484928/998801033625079818/standard1.gif"
 			)

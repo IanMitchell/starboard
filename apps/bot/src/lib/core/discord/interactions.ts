@@ -1,18 +1,19 @@
-import { Interaction } from "discord.js";
+import { Interaction, InteractionType } from "discord.js";
 import { getSerializedCommandInteractionKey } from "../commands";
 
 export function getInteractionKey(interaction: Interaction) {
-	if (interaction.isCommand() || interaction.isAutocomplete()) {
-		return getSerializedCommandInteractionKey(interaction);
-	}
+	switch (interaction.type) {
+		case InteractionType.ApplicationCommand:
+		case InteractionType.ApplicationCommandAutocomplete:
+			if (interaction.isContextMenuCommand()) {
+				return interaction.commandName;
+			}
 
-	if (interaction.isMessageComponent()) {
-		return interaction.customId;
+			return getSerializedCommandInteractionKey(interaction);
+		case InteractionType.MessageComponent:
+		case InteractionType.ModalSubmit:
+			return interaction.customId;
+		default:
+			return "unknown";
 	}
-
-	if (interaction.isContextMenu()) {
-		return interaction.commandName;
-	}
-
-	return "unknown";
 }

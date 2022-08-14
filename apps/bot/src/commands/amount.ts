@@ -2,7 +2,7 @@ import {
 	SlashCommandBuilder,
 	SlashCommandIntegerOption,
 } from "@discordjs/builders";
-import { Permissions } from "discord.js";
+import { PermissionFlagsBits } from "discord.js";
 import { Counter } from "prom-client";
 import { CommandArgs } from "../typedefs";
 import getLogger, { getInteractionMeta } from "../lib/core/logging";
@@ -19,7 +19,7 @@ export const command = new SlashCommandBuilder()
 	.setDescription(
 		"Set the amount of reactions required for a message to to reach the starboard"
 	)
-	.setDefaultMemberPermissions(Permissions.FLAGS.MANAGE_GUILD)
+	.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
 	.setDMPermission(false)
 	.addIntegerOption(
 		new SlashCommandIntegerOption()

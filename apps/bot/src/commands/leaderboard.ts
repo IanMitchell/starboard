@@ -1,5 +1,5 @@
 import { SlashCommandBuilder, userMention } from "@discordjs/builders";
-import { CommandInteraction, MessageEmbed } from "discord.js";
+import { CommandInteraction, EmbedBuilder } from "discord.js";
 import { Counter } from "prom-client";
 import { CommandArgs } from "../typedefs";
 import getLogger, { getInteractionMeta } from "../lib/core/logging";
@@ -19,7 +19,7 @@ export const command = new SlashCommandBuilder()
 	.setDMPermission(false);
 
 export default async ({ bot }: CommandArgs) => {
-	bot.onSlashCommand(command, async (interaction: CommandInteraction) => {
+	bot.onSlashCommand(command, async (interaction) => {
 		if (!interaction.inCachedGuild()) {
 			log.warn(
 				`Handled an interaction in a non-cached guild ${
@@ -125,13 +125,19 @@ export default async ({ bot }: CommandArgs) => {
 		void interaction.editReply({
 			allowedMentions: {},
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("Starboard Leaderboard")
 					.setColor(0xfee75c)
 					.setURL("https://starboard.social")
-					.addField("Most Starboard Messages", messageList, true)
-					.addField("Most ⭐️ Received", receivedList, true)
-					.addField("Most ⭐️ Given", givenList),
+					.addFields([
+						{
+							name: "Most Starboard Messages",
+							value: messageList,
+							inline: true,
+						},
+						{ name: "Most ⭐️ Received", value: receivedList, inline: true },
+						{ name: "Most ⭐️ Given", value: givenList },
+					]),
 			],
 		});
 	});

@@ -6,8 +6,8 @@ import {
 } from "@discordjs/builders";
 import {
 	AutocompleteInteraction,
-	CommandInteraction,
-	ContextMenuInteraction,
+	ChatInputCommandInteraction,
+	ContextMenuCommandInteraction,
 } from "discord.js";
 import { CommandBuilder, SlashCommandBuilderDefinition } from "../../typedefs";
 
@@ -21,13 +21,13 @@ export function getSlashCommandKey(definition: SlashCommandBuilderDefinition) {
 
 export function getSerializedCommandInteractionKey(
 	interaction:
-		| CommandInteraction
+		| ChatInputCommandInteraction
 		| AutocompleteInteraction
-		| ContextMenuInteraction
+		| ContextMenuCommandInteraction
 ) {
 	const name = interaction.commandName;
 
-	if (interaction instanceof ContextMenuInteraction) {
+	if (interaction.isContextMenuCommand()) {
 		return name;
 	}
 

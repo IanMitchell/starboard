@@ -1,7 +1,7 @@
 import { ContextMenuCommandBuilder } from "@discordjs/builders";
 import { ApplicationCommandType } from "discord-api-types/v10";
 import * as messages from "../lib/starboard/messages";
-import { Permissions } from "discord.js";
+import { PermissionFlagsBits } from "discord.js";
 import { Counter } from "prom-client";
 import { CommandArgs } from "../typedefs";
 import getLogger, { getInteractionMeta } from "../lib/core/logging";
@@ -17,13 +17,16 @@ const unignoreCounter = new Counter({
 export const command = new ContextMenuCommandBuilder()
 	.setType(ApplicationCommandType.Message)
 	.setName("Unignore")
-	.setDefaultMemberPermissions(Permissions.FLAGS.MANAGE_GUILD)
+	.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
 	.setDMPermission(false);
 
 export default async ({ bot }: CommandArgs) => {
 	bot.onContextMenuCommand(command, async (interaction) => {
-		if (!interaction.isMessageContextMenu()) {
-			log.warn("Handled a non-message context menu interaction");
+		if (!interaction.isMessageContextMenuCommand()) {
+			log.warn(
+				"Handled a non-message context menu interaction",
+				getInteractionMeta(interaction)
+			);
 			await interaction.reply({
 				content: "Sorry, an unknown error occurred.",
 				ephemeral: true,

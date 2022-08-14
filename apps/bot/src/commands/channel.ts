@@ -3,7 +3,11 @@ import {
 	SlashCommandChannelOption,
 	SlashCommandSubcommandBuilder,
 } from "@discordjs/builders";
-import { CommandInteraction, MessageEmbed, Permissions } from "discord.js";
+import {
+	CommandInteraction,
+	EmbedBuilder,
+	PermissionFlagsBits,
+} from "discord.js";
 import { Counter } from "prom-client";
 import { CommandArgs } from "../typedefs";
 import getLogger, { getInteractionMeta } from "../lib/core/logging";
@@ -34,7 +38,7 @@ const channelResetCounter = new Counter({
 export const command = new SlashCommandBuilder()
 	.setName("channel")
 	.setDescription("Add or remove channels from the starboard bot")
-	.setDefaultMemberPermissions(Permissions.FLAGS.MANAGE_GUILD)
+	.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
 	.setDMPermission(false);
 
 const addCommand = new SlashCommandSubcommandBuilder()
@@ -101,219 +105,208 @@ const viewCommand = new SlashCommandSubcommandBuilder()
 	.setDescription("View the current channels being watched and ignored");
 
 export default async ({ bot }: CommandArgs) => {
-	bot.onSlashCommand(
-		[command, viewCommand],
-		async (interaction: CommandInteraction) => {
-			if (!interaction.inCachedGuild()) {
-				log.warn(
-					`Handled an interaction in a non-cached guild ${
-						interaction.guildId ?? "[unknown]"
-					}`,
-					getInteractionMeta(interaction)
-				);
-				return interaction.reply({
-					content: "Please add the bot before running this command",
-					ephemeral: true,
-				});
-			}
-
-			channelListCounter.inc();
-			log.info(
-				`Viewing Channel List for ${interaction.guildId}`,
+	bot.onSlashCommand([command, viewCommand], async (interaction) => {
+		if (!interaction.inCachedGuild()) {
+			log.warn(
+				`Handled an interaction in a non-cached guild ${
+					interaction.guildId ?? "[unknown]"
+				}`,
 				getInteractionMeta(interaction)
 			);
-			await interaction.deferReply({ ephemeral: true });
-
-			const channelSettings = await bot.database.channelSetting.findMany({
-				select: {
-					channelId: true,
-					visible: true,
-				},
-				where: {
-					guildSettingGuildId: {
-						equals: BigInt(interaction.guildId),
-					},
-				},
+			return interaction.reply({
+				content: "Please add the bot before running this command",
+				ephemeral: true,
 			});
+		}
 
-			const embed = new MessageEmbed();
-			embed.setTitle("Starboard Channels");
-			embed.setDescription(
+		channelListCounter.inc();
+		log.info(
+			`Viewing Channel List for ${interaction.guildId}`,
+			getInteractionMeta(interaction)
+		);
+		await interaction.deferReply({ ephemeral: true });
+
+		const channelSettings = await bot.database.channelSetting.findMany({
+			select: {
+				channelId: true,
+				visible: true,
+			},
+			where: {
+				guildSettingGuildId: {
+					equals: BigInt(interaction.guildId),
+				},
+			},
+		});
+
+		const embed = new EmbedBuilder()
+			.setTitle("Starboard Channels")
+			.setDescription(
 				"These are the channels I am ignoring and listening to. Any channel that isn't visible to the @everyone role is ignored by default."
-			);
-			embed.setColor(0xfee75c);
+			)
+			.setColor(0xfee75c);
 
-			const watchedChannels = channelSettings
-				.filter((channel) => channel.visible)
-				.map((channel) => channel.toString)
-				.join("\n");
+		const watchedChannels = channelSettings
+			.filter((channel) => channel.visible)
+			.map((channel) => channel.toString)
+			.join("\n");
 
-			embed.addField(
-				"Watched Channels",
+		const ignoredChannels = channelSettings
+			.filter((channel) => !channel.visible)
+			.map((channel) => channel.toString)
+			.join("\n");
+
+		embed.addFields([
+			{
+				name: "Watched Channels",
 				// eslint-disable-next-line no-negated-condition
-				watchedChannels !== "" ? watchedChannels : "_None_"
-			);
-
-			const ignoredChannels = channelSettings
-				.filter((channel) => !channel.visible)
-				.map((channel) => channel.toString)
-				.join("\n");
-
-			embed.addField(
-				"Ignored Channels",
+				value: watchedChannels !== "" ? watchedChannels : "_None_",
+			},
+			{
+				name: "Ignored Channels",
 				// eslint-disable-next-line no-negated-condition
-				ignoredChannels !== "" ? ignoredChannels : "_None_"
-			);
+				value: ignoredChannels !== "" ? ignoredChannels : "_None_",
+			},
+		]);
 
-			await interaction.editReply({
-				embeds: [embed],
-			});
-		}
-	);
+		await interaction.editReply({
+			embeds: [embed],
+		});
+	});
 
-	bot.onSlashCommand(
-		[command, addCommand],
-		async (interaction: CommandInteraction) => {
-			if (!interaction.inCachedGuild()) {
-				log.warn(
-					`Handled an interaction in a non-cached guild ${
-						interaction.guildId ?? "[unknown]"
-					}`,
-					getInteractionMeta(interaction)
-				);
-				return interaction.reply({
-					content: "Please add the bot before running this command",
-					ephemeral: true,
-				});
-			}
-
-			channelAddCounter.inc();
-			const target = interaction.options.getChannel("channel", true);
-			const channelId = BigInt(target.id);
-			const guildId = BigInt(interaction.guildId);
-			log.info(
-				`Adding channel ${channelId.toString()}`,
+	bot.onSlashCommand([command, addCommand], async (interaction) => {
+		if (!interaction.inCachedGuild()) {
+			log.warn(
+				`Handled an interaction in a non-cached guild ${
+					interaction.guildId ?? "[unknown]"
+				}`,
 				getInteractionMeta(interaction)
 			);
+			return interaction.reply({
+				content: "Please add the bot before running this command",
+				ephemeral: true,
+			});
+		}
 
-			await interaction.deferReply({ ephemeral: true });
-			await bot.database.channelSetting.upsert({
-				create: {
-					channelId,
-					visible: true,
-					guild: {
-						connectOrCreate: {
-							create: {
-								guildId,
-							},
-							where: {
-								guildId,
-							},
+		channelAddCounter.inc();
+		const target = interaction.options.getChannel("channel", true);
+		const channelId = BigInt(target.id);
+		const guildId = BigInt(interaction.guildId);
+		log.info(
+			`Adding channel ${channelId.toString()}`,
+			getInteractionMeta(interaction)
+		);
+
+		await interaction.deferReply({ ephemeral: true });
+		await bot.database.channelSetting.upsert({
+			create: {
+				channelId,
+				visible: true,
+				guild: {
+					connectOrCreate: {
+						create: {
+							guildId,
+						},
+						where: {
+							guildId,
 						},
 					},
 				},
-				update: {
-					visible: true,
-				},
-				where: {
-					channelId: BigInt(target.id),
-				},
-			});
+			},
+			update: {
+				visible: true,
+			},
+			where: {
+				channelId: BigInt(target.id),
+			},
+		});
 
-			await interaction.editReply({
-				content: `I've added ${target.toString()} to the starboard!`,
-			});
-		}
-	);
+		await interaction.editReply({
+			content: `I've added ${target.toString()} to the starboard!`,
+		});
+	});
 
-	bot.onSlashCommand(
-		[command, removeCommand],
-		async (interaction: CommandInteraction) => {
-			if (!interaction.inCachedGuild()) {
-				log.warn(
-					`Handled an interaction in a non-cached guild ${
-						interaction.guildId ?? "[unknown]"
-					}`,
-					getInteractionMeta(interaction)
-				);
-				return interaction.reply({
-					content: "Please add the bot before running this command",
-					ephemeral: true,
-				});
-			}
-
-			channelRemoveCounter.inc();
-			const target = interaction.options.getChannel("channel", true);
-			const channelId = BigInt(target.id);
-			const guildId = BigInt(interaction.guildId);
-			log.info(
-				`Removing channel ${channelId.toString()}`,
+	bot.onSlashCommand([command, removeCommand], async (interaction) => {
+		if (!interaction.inCachedGuild()) {
+			log.warn(
+				`Handled an interaction in a non-cached guild ${
+					interaction.guildId ?? "[unknown]"
+				}`,
 				getInteractionMeta(interaction)
 			);
+			return interaction.reply({
+				content: "Please add the bot before running this command",
+				ephemeral: true,
+			});
+		}
 
-			await interaction.deferReply({ ephemeral: true });
-			await bot.database.channelSetting.upsert({
-				create: {
-					channelId,
-					visible: false,
-					guild: {
-						connectOrCreate: {
-							create: {
-								guildId,
-							},
-							where: {
-								guildId,
-							},
+		channelRemoveCounter.inc();
+		const target = interaction.options.getChannel("channel", true);
+		const channelId = BigInt(target.id);
+		const guildId = BigInt(interaction.guildId);
+		log.info(
+			`Removing channel ${channelId.toString()}`,
+			getInteractionMeta(interaction)
+		);
+
+		await interaction.deferReply({ ephemeral: true });
+		await bot.database.channelSetting.upsert({
+			create: {
+				channelId,
+				visible: false,
+				guild: {
+					connectOrCreate: {
+						create: {
+							guildId,
+						},
+						where: {
+							guildId,
 						},
 					},
 				},
-				update: {
-					visible: false,
-				},
-				where: {
-					channelId: BigInt(target.id),
-				},
-			});
+			},
+			update: {
+				visible: false,
+			},
+			where: {
+				channelId: BigInt(target.id),
+			},
+		});
 
-			await interaction.editReply({
-				content: `I've hidden ${target.toString()} from the starboard!`,
-			});
-		}
-	);
+		await interaction.editReply({
+			content: `I've hidden ${target.toString()} from the starboard!`,
+		});
+	});
 
-	bot.onSlashCommand(
-		[command, resetCommand],
-		async (interaction: CommandInteraction) => {
-			if (!interaction.inCachedGuild()) {
-				log.warn(
-					`Handled an interaction in a non-cached guild ${
-						interaction.guildId ?? "[unknown]"
-					}`,
-					getInteractionMeta(interaction)
-				);
-				return interaction.reply({
-					content: "Please add the bot before running this command",
-					ephemeral: true,
-				});
-			}
-
-			channelResetCounter.inc();
-			const target = interaction.options.getChannel("channel", true);
-			log.info(
-				`Resetting channel ${target.id} settings`,
+	bot.onSlashCommand([command, resetCommand], async (interaction) => {
+		if (!interaction.inCachedGuild()) {
+			log.warn(
+				`Handled an interaction in a non-cached guild ${
+					interaction.guildId ?? "[unknown]"
+				}`,
 				getInteractionMeta(interaction)
 			);
-
-			await interaction.deferReply({ ephemeral: true });
-			await bot.database.channelSetting.delete({
-				where: {
-					channelId: BigInt(target.id),
-				},
-			});
-
-			await interaction.editReply({
-				content: `I've removed custom settings for ${target.toString()}`,
+			return interaction.reply({
+				content: "Please add the bot before running this command",
+				ephemeral: true,
 			});
 		}
-	);
+
+		channelResetCounter.inc();
+		const target = interaction.options.getChannel("channel", true);
+		log.info(
+			`Resetting channel ${target.id} settings`,
+			getInteractionMeta(interaction)
+		);
+
+		await interaction.deferReply({ ephemeral: true });
+		await bot.database.channelSetting.delete({
+			where: {
+				channelId: BigInt(target.id),
+			},
+		});
+
+		await interaction.editReply({
+			content: `I've removed custom settings for ${target.toString()}`,
+		});
+	});
 };

@@ -14,6 +14,7 @@ module.exports = {
 		"@typescript-eslint/ban-types": 0,
 		"@typescript-eslint/prefer-literal-enum-member": 0,
 		"@typescript-eslint/naming-convention": 0,
+		"@typescript-eslint/consistent-type-definitions": 0,
 		"no-eq-null": 0,
 		"no-bitwise": 0,
 		"no-await-in-loop": 0,
