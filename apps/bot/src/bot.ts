@@ -36,6 +36,7 @@ import chalk from "chalk";
 import type { PrismaClient } from "@prisma/client";
 import { getError } from "./lib/core/node/error";
 import { Counter } from "prom-client";
+import { getInteractionKey } from "./lib/core/discord/interactions";
 
 const log = getLogger("bot");
 
@@ -105,15 +106,28 @@ export class Application extends Client {
 	}
 
 	async loadDirectory(relativePath: string) {
+		const transaction = Sentry.startTransaction({
+			op: relativePath,
+			name: "Loading",
+		});
+
 		log.info(`Loading ${relativePath}`);
 		const directory = path.join(getDirname(import.meta.url), relativePath);
 
-		fs.readdir(directory, (err, files) => {
+		fs.readdir(directory, async (err, files) => {
 			if (err) {
 				throw err;
 			}
 
-			files.forEach(async (file) => this.loadFile(directory, file));
+			const promises = [];
+
+			for (const file of files) {
+				promises.push(this.loadFile(directory, file));
+			}
+
+			return Promise.all(promises).then(() => {
+				transaction.finish();
+			});
 		});
 	}
 
@@ -185,6 +199,11 @@ export class Application extends Client {
 	}
 
 	handleInteraction(interaction: Interaction) {
+		const transaction = Sentry.startTransaction({
+			op: getInteractionKey(interaction),
+			name: "Interaction",
+		});
+
 		if (interaction.isCommand()) {
 			const key = getSerializedCommandInteractionKey(interaction);
 
@@ -208,6 +227,7 @@ export class Application extends Client {
 					`Unknown component interaction: ${interaction.customId}`,
 					getInteractionMeta(interaction)
 				);
+				transaction.finish();
 				return;
 			}
 
@@ -253,6 +273,8 @@ export class Application extends Client {
 				);
 			}
 		}
+
+		transaction.finish();
 	}
 
 	onSlashCommand(
