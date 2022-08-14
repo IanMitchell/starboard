@@ -40,7 +40,6 @@
 		"ioredis": "^5.0.4",
 		"node-cache": "^5.1.2",
 		"prom-client": "^14.0.1",
-		"dedent": "0.7.0",
 		"date-fns": "2.28.0"
 	}
 }

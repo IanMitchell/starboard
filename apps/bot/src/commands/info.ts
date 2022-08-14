@@ -4,7 +4,6 @@ import { CommandArgs } from "../typedefs";
 import getLogger, { getInteractionMeta } from "../lib/core/logging";
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { MessageEmbed } from "discord.js";
-import dedent from "dedent";
 import {
 	getTotalGuildCount,
 	getTotalMemberCount,
@@ -55,6 +54,12 @@ export default async ({ bot }: CommandArgs) => {
 		const users = await getTotalMemberCount();
 		const stars = await getTotalStarCount();
 		const messages = await getTotalMessageCount();
+		const stats = [
+			`${guilds} ${plural(guilds, "Guild", "Guilds")}`,
+			`${users} ${plural(users, "User", "Users")}`,
+			`${messages} ${plural(messages, "Message", "Messages")}`,
+			`${stars} ${plural(stars, "Reaction", "Reactions")}`,
+		];
 
 		const uptime = formatDistance(new Date(), Date.now() - (bot.uptime ?? 0));
 
@@ -66,16 +71,7 @@ export default async ({ bot }: CommandArgs) => {
 				`I listen for ⭐️ reactions and repost the best messages to a starboard channel! Source available on [GitHub](https://github.com/ianmitchell/starboard).`
 			)
 			.setThumbnail(bot.user.displayAvatarURL({ format: "png" }))
-			.addField(
-				"Stats",
-				dedent`
-      	  ${guilds} ${plural(guilds, "Guild", "Guilds")}
-					${users} ${plural(users, "User", "Users")}
-					${messages} ${plural(messages, "Message", "Messages")}
-					${stars} ${plural(stars, "Reaction", "Reactions")}
-	      `,
-				true
-			)
+			.addField("Stats", stats.join("\n"), true)
 			.addField("Uptime", uptime, true)
 			.setImage(
 				"https://cdn.discordapp.com/attachments/852975798255484928/998801033625079818/standard1.gif"
