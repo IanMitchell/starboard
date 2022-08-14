@@ -198,7 +198,7 @@ export class Application extends Client {
 		}
 	}
 
-	handleInteraction(interaction: Interaction) {
+	async handleInteraction(interaction: Interaction) {
 		const transaction = Sentry.startTransaction({
 			op: getInteractionKey(interaction),
 			name: "Interaction",
@@ -209,7 +209,7 @@ export class Application extends Client {
 
 			if (this.slashCommands.has(key)) {
 				try {
-					this.slashCommands.get(key)?.handler(interaction);
+					await this.slashCommands.get(key)?.handler(interaction);
 				} catch (err: unknown) {
 					const error = getError(err);
 					log.error(error.message, getInteractionMeta(interaction));
@@ -232,7 +232,9 @@ export class Application extends Client {
 			}
 
 			try {
-				this.messageComponents.get(interaction.customId)?.handler(interaction);
+				await this.messageComponents
+					.get(interaction.customId)
+					?.handler(interaction);
 			} catch (err: unknown) {
 				const error = getError(err);
 				log.error(error.message, getInteractionMeta(interaction));
@@ -241,7 +243,7 @@ export class Application extends Client {
 		} else if (interaction.isContextMenu()) {
 			if (this.contextMenuCommands.has(interaction.commandName)) {
 				try {
-					this.contextMenuCommands
+					await this.contextMenuCommands
 						.get(interaction.commandName)
 						?.handler(interaction);
 				} catch (err: unknown) {
@@ -260,7 +262,7 @@ export class Application extends Client {
 
 			if (this.autocompleteHandlers.has(key)) {
 				try {
-					this.autocompleteHandlers.get(key)?.handler(interaction);
+					await this.autocompleteHandlers.get(key)?.handler(interaction);
 				} catch (err: unknown) {
 					const error = getError(err);
 					log.error(error.message, getInteractionMeta(interaction));
