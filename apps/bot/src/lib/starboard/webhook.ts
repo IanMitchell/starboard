@@ -49,7 +49,7 @@ export async function createWebhookMessage(
 	const post = await webhook.send({
 		...webhookMessage,
 		components: [new ActionRowBuilder<ButtonBuilder>().addComponents(link)],
-		allowedMentions: {},
+		allowedMentions: { parse: [] },
 	});
 
 	await webhook.delete();
