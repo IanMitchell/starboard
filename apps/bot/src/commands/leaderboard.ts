@@ -123,7 +123,7 @@ export default async ({ bot }: CommandArgs) => {
 		}
 
 		void interaction.editReply({
-			allowedMentions: {},
+			allowedMentions: { parse: [] },
 			embeds: [
 				new EmbedBuilder()
 					.setTitle("Starboard Leaderboard")
