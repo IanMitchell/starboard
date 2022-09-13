@@ -66,7 +66,11 @@ export default async ({ bot }: CommandArgs) => {
 		await interaction.deferReply({ ephemeral: true });
 
 		try {
-			await target.createWebhook({ name: "Starboard" });
+			// await target.createWebhook({ name: "Starboard Bot" });
+			target
+				.createWebhook({ name: "Starboard Bot" })
+				.then(console.log)
+				.catch(console.error);
 		} catch {
 			await interaction.editReply({
 				content: `Sorry, I was unable to create a webhook in ${target.toString()}! Make sure the channel has room for a new webhook and that I have permission to create one.`,
