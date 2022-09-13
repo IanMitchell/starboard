@@ -24,7 +24,7 @@ export async function createWebhookMessage(
 
 	if (webhook == null) {
 		log.warn("No webhook found, creating one");
-		webhook = await channel.createWebhook({ name: "Starboard Bot" });
+		webhook = await channel.createWebhook({ name: "Starboard Reaction" });
 	}
 
 	const link = new ButtonBuilder()
