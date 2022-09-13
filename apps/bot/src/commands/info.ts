@@ -63,6 +63,22 @@ export default async ({ bot }: CommandArgs) => {
 
 		const uptime = formatDistance(new Date(), Date.now() - (bot.uptime ?? 0));
 
+		let targetChannel = "Unknown";
+		const settings = await bot.database.guildSetting.findUnique({
+			select: {
+				log: true,
+				amount: true,
+			},
+			where: {
+				guildId: BigInt(interaction.guildId),
+			},
+		});
+
+		if (settings?.log != null) {
+			const channel = await bot.channels.fetch(settings.log.toString());
+			targetChannel = channel?.toString() ?? "Unknown";
+		}
+
 		const embed = new EmbedBuilder()
 			.setTitle("Starboard Info")
 			.setColor(0xfee75c)
@@ -74,6 +90,13 @@ export default async ({ bot }: CommandArgs) => {
 			.addFields([
 				{ name: "Stats", value: stats.join("\n"), inline: true },
 				{ name: "Uptime", value: uptime, inline: true },
+				{
+					name: "Settings",
+					value: `Channel: ${targetChannel}\nAmount: ${
+						settings?.amount?.toString() ?? "Unknown"
+					}`,
+					inline: true,
+				},
 			])
 			.setImage(
 				"https://cdn.discordapp.com/attachments/852975798255484928/998801033625079818/standard1.gif"
