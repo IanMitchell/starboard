@@ -9,18 +9,22 @@ import {
 	WebhookMessageOptions,
 } from "discord.js";
 import bot from "../../bot";
+import getLogger from "../core/logging";
+
+const log = getLogger("webhook");
 
 export async function createWebhookMessage(
 	channel: TextChannel | NewsChannel | VoiceChannel,
 	message: Message
 ) {
 	const webhooks = await channel.fetchWebhooks();
-	const webhook = webhooks.find(
+	let webhook = webhooks.find(
 		(webhook) => webhook.applicationId === bot.application?.id
 	);
 
 	if (webhook == null) {
-		return null;
+		log.warn("No webhook found, creating one");
+		webhook = await channel.createWebhook({ name: "Starboard Bot" });
 	}
 
 	const link = new ButtonBuilder()
