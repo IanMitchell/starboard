@@ -2,11 +2,10 @@ import {
 	SlashCommandBuilder,
 	SlashCommandChannelOption,
 } from "@discordjs/builders";
-import { PermissionFlagsBits, Permissions } from "discord.js";
+import { PermissionFlagsBits, ChannelType } from "discord.js";
 import { Counter } from "prom-client";
 import { CommandArgs } from "../typedefs";
 import getLogger, { getInteractionMeta } from "../lib/core/logging";
-import { ChannelType } from "discord-api-types/v10";
 
 const log = getLogger("log");
 
@@ -56,7 +55,7 @@ export default async ({ bot }: CommandArgs) => {
 			getInteractionMeta(interaction)
 		);
 
-		if (!target.isTextBased()) {
+		if (!target.isTextBased() || target.isThread()) {
 			await interaction.reply({
 				content: "Please choose a text or announcement channel",
 				ephemeral: true,
@@ -65,16 +64,55 @@ export default async ({ bot }: CommandArgs) => {
 		}
 
 		await interaction.deferReply({ ephemeral: true });
+
+		try {
+			await target.createWebhook({ name: "Starboard Bot" });
+		} catch {
+			await interaction.editReply({
+				content: `Sorry, I was unable to create a webhook in ${target.toString()}! Make sure the channel has room for a new webhook and that I have permission to create one.`,
+			});
+			return;
+		}
+
+		const guildId = BigInt(interaction.guild.id);
+
+		// Cleanup old Webhook
+		const previous = await bot.database.guildSetting.findUnique({
+			select: {
+				log: true,
+			},
+			where: {
+				guildId,
+			},
+		});
+
+		if (previous?.log != null) {
+			const oldChannel = await bot.channels.fetch(previous.log.toString());
+
+			if (
+				oldChannel?.isTextBased() &&
+				!oldChannel.isThread() &&
+				!oldChannel.isDMBased()
+			) {
+				const oldWebhooks = await oldChannel.fetchWebhooks();
+				const oldWebhook = oldWebhooks.find(
+					(webhook) => webhook.applicationId === bot.application?.id
+				);
+				await oldWebhook?.delete();
+			}
+		}
+
+		// Update Settings
 		await bot.database.guildSetting.upsert({
 			update: {
 				log: BigInt(target.id),
 			},
 			create: {
-				guildId: BigInt(interaction.guild.id),
+				guildId,
 				log: BigInt(target.id),
 			},
 			where: {
-				guildId: BigInt(interaction.guild.id),
+				guildId,
 			},
 		});
 

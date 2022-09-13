@@ -24,6 +24,15 @@ export default async ({ bot }: CommandArgs) => {
 			return;
 		}
 
+		// Prevent repeat stars
+		if (rawReaction.message.webhookId != null) {
+			const webhook = await bot.fetchWebhook(rawReaction.message.webhookId);
+
+			if (webhook.applicationId === bot.user?.id) {
+				return;
+			}
+		}
+
 		const reaction = await rawReaction.fetch();
 		const user = await rawUser.fetch();
 		if (reaction.message.guildId == null) {
@@ -61,6 +70,15 @@ export default async ({ bot }: CommandArgs) => {
 	bot.on("messageReactionAdd", async (raw, rawUser) => {
 		if (raw.emoji.name !== "⭐" || raw.message.author === rawUser) {
 			return;
+		}
+
+		// Prevent repeat stars
+		if (raw.message.webhookId != null) {
+			const webhook = await bot.fetchWebhook(raw.message.webhookId);
+
+			if (webhook.applicationId === bot.user?.id) {
+				return;
+			}
 		}
 
 		const reaction = raw.partial ? await raw.fetch() : raw;

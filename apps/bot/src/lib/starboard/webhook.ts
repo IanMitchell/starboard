@@ -8,17 +8,20 @@ import {
 	VoiceChannel,
 	WebhookMessageOptions,
 } from "discord.js";
+import bot from "../../bot";
 
 export async function createWebhookMessage(
 	channel: TextChannel | NewsChannel | VoiceChannel,
 	message: Message
 ) {
-	const webhook = await channel.createWebhook({
-		name: message.author.username,
-		avatar: message.author.avatarURL({
-			extension: "png",
-		}),
-	});
+	const webhooks = await channel.fetchWebhooks();
+	const webhook = webhooks.find(
+		(webhook) => webhook.applicationId === bot.application?.id
+	);
+
+	if (webhook == null) {
+		return null;
+	}
 
 	const link = new ButtonBuilder()
 		.setStyle(ButtonStyle.Link)
@@ -32,7 +35,13 @@ export async function createWebhookMessage(
 		embed.toJSON()
 	);
 
-	const webhookMessage: Omit<WebhookMessageOptions, "flags"> = {};
+	const webhookMessage: Omit<WebhookMessageOptions, "flags"> = {
+		username: message.author.username,
+		avatarURL:
+			message.author.avatarURL({
+				extension: "png",
+			}) ?? undefined,
+	};
 
 	if (message.content != null && message.content.length > 0) {
 		webhookMessage.content = message.content;
@@ -51,8 +60,6 @@ export async function createWebhookMessage(
 		components: [new ActionRowBuilder<ButtonBuilder>().addComponents(link)],
 		allowedMentions: { parse: [] },
 	});
-
-	await webhook.delete();
 
 	return post.id;
 }

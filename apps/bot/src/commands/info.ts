@@ -84,7 +84,7 @@ export default async ({ bot }: CommandArgs) => {
 			.setColor(0xfee75c)
 			.setURL("https://starboard.social")
 			.setDescription(
-				`I listen for ⭐️ reactions and repost the best messages to a starboard channel! Source available on [GitHub](https://github.com/ianmitchell/starboard).`
+				`I listen for ⭐️ reactions and repost the best messages to a starboard channel! To get started, first run </log:999079924377845863> to setup the starboard channel, and then customize the amount of stars needed for messages to get posted with </amount:999079924377845861>.\n\nSource available on [GitHub](https://github.com/ianmitchell/starboard).`
 			)
 			.setThumbnail(bot.user.displayAvatarURL({ extension: "png" }))
 			.addFields([
