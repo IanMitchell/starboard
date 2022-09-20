@@ -64,23 +64,8 @@ export default async ({ bot }: CommandArgs) => {
 		}
 
 		await interaction.deferReply({ ephemeral: true });
-
-		try {
-			log.info("Creating Webhook");
-			const webhook = await target.createWebhook({ name: "Starboard Bot" });
-			log.info("[DEBUG] Webhook information", {
-				id: webhook.id,
-				date: webhook.createdTimestamp,
-				webhook,
-			});
-		} catch {
-			await interaction.editReply({
-				content: `Sorry, I was unable to create a webhook in ${target.toString()}! Make sure the channel has room for a new webhook and that I have permission to create one.`,
-			});
-			return;
-		}
-
 		const guildId = BigInt(interaction.guild.id);
+		let oldWebhook;
 
 		// Cleanup old Webhook
 		const previous = await bot.database.guildSetting.findUnique({
@@ -101,12 +86,23 @@ export default async ({ bot }: CommandArgs) => {
 				!oldChannel.isDMBased()
 			) {
 				const oldWebhooks = await oldChannel.fetchWebhooks();
-				const oldWebhook = oldWebhooks.find(
+				oldWebhook = oldWebhooks.find(
 					(webhook) => webhook.applicationId === bot.application?.id
 				);
-				await oldWebhook?.delete();
 			}
 		}
+
+		try {
+			log.info("Creating Webhook");
+			const webhook = await target.createWebhook({ name: "Starboard Bot" });
+		} catch {
+			await interaction.editReply({
+				content: `Sorry, I was unable to create a webhook in ${target.toString()}! Make sure the channel has room for a new webhook and that I have permission to create one.`,
+			});
+			return;
+		}
+
+		await oldWebhook?.delete();
 
 		// Update Settings
 		await bot.database.guildSetting.upsert({
