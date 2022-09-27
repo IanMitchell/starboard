@@ -17,6 +17,10 @@ export async function createWebhookMessage(
 	channel: TextChannel | NewsChannel | VoiceChannel,
 	message: Message
 ) {
+	if (message.channel.isDMBased()) {
+		return null;
+	}
+
 	const webhooks = await channel.fetchWebhooks();
 	let webhook = webhooks.find(
 		(webhook) => webhook.applicationId === bot.application?.id
@@ -33,9 +37,9 @@ export async function createWebhookMessage(
 		.setEmoji({ name: "🔗" })
 		.setLabel(
 			`Posted in #${
-				channel.name.length > 68
-					? channel.name.slice(0, 67) + "…"
-					: channel.name
+				message.channel.name.length > 68
+					? message.channel.name.slice(0, 67) + "…"
+					: message.channel.name
 			}`
 		);
 
