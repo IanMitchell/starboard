@@ -31,7 +31,11 @@ export async function createWebhookMessage(
 		.setStyle(ButtonStyle.Link)
 		.setURL(message.url)
 		.setEmoji({ name: "🔗" })
-		.setLabel("View Original");
+		.setLabel(
+			`Posted in #${channel.name}`.length > 80
+				? `Posted in #${channel.name}`.slice(0, 77) + "..."
+				: `Posted in #${channel.name}`
+		);
 
 	const attachments = [...message.attachments.values()];
 
