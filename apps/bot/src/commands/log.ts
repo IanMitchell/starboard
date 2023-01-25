@@ -77,7 +77,7 @@ export default async ({ bot }: CommandArgs) => {
 			},
 		});
 
-		if (previous?.log != null) {
+		if (previous?.log != null && previous.log > 0n) {
 			const oldChannel = await bot.channels.fetch(previous.log.toString());
 
 			if (
