@@ -7,15 +7,15 @@ import { Counter } from "prom-client";
 import { CommandArgs } from "../typedefs";
 import getLogger, { getInteractionMeta } from "../lib/core/logging";
 
-const log = getLogger("log");
+const log = getLogger("starboard");
 
-const logCounter = new Counter({
-	name: "log_command_total",
-	help: "Total number of log commands ran",
+const starboardCounter = new Counter({
+	name: "starboard_command_total",
+	help: "Total number of starboard commands ran",
 });
 
 export const command = new SlashCommandBuilder()
-	.setName("log")
+	.setName("starboard")
 	.setDescription("Set the channel the bot will post starred messages to")
 	.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
 	.setDMPermission(false)
@@ -46,7 +46,7 @@ export default async ({ bot }: CommandArgs) => {
 			});
 		}
 
-		logCounter.inc();
+		starboardCounter.inc();
 		let target;
 
 		try {
@@ -67,7 +67,7 @@ export default async ({ bot }: CommandArgs) => {
 		}
 
 		log.info(
-			`Setting log channel to ${target.id} in ${interaction.guildId}`,
+			`Setting starboard channel to ${target.id} in ${interaction.guildId}`,
 			getInteractionMeta(interaction)
 		);
 
@@ -147,13 +147,13 @@ export default async ({ bot }: CommandArgs) => {
 				)
 		) {
 			await interaction.editReply({
-				content: `The starboard log channel has been updated, but I don't have all the permissions I need. Please give me the **Manage Webhook** and **Manage Messages** permissions in ${target.toString()}!`,
+				content: `The starboard channel has been updated, but I don't have all the permissions I need. Please give me the **Manage Webhook** and **Manage Messages** permissions in ${target.toString()}!`,
 			});
 			return;
 		}
 
 		await interaction.editReply({
-			content: `The Starboard log channel has been set to ${target.toString()}`,
+			content: `The Starboard channel has been set to ${target.toString()}`,
 		});
 	});
 };
