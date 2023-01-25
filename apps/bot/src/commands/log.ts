@@ -47,9 +47,25 @@ export default async ({ bot }: CommandArgs) => {
 		}
 
 		logCounter.inc();
-		const target = await interaction.options
-			.getChannel("channel", true)
-			.fetch();
+		let target;
+
+		try {
+			target = await interaction.options.getChannel("channel", true).fetch();
+		} catch (err: unknown) {
+			log.error(
+				`Failed to fetch channel ${
+					interaction.options.getChannel("channel", true)?.id
+				} in ${interaction.guildId}`,
+				getInteractionMeta(interaction)
+			);
+			await interaction.reply({
+				content:
+					"Sorry, I wasn't able to find that channel. I may not have access to it!",
+				ephemeral: true,
+			});
+			return;
+		}
+
 		log.info(
 			`Setting log channel to ${target.id} in ${interaction.guildId}`,
 			getInteractionMeta(interaction)
