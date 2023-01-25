@@ -50,6 +50,12 @@ const interactionCounter = new Counter({
 	help: "Total Interactions handled",
 });
 
+const eventHistogram = new Counter({
+	name: "event_total",
+	help: "Total Events received",
+	labelNames: ["type"],
+});
+
 export class Application extends Client {
 	public readonly database: PrismaClient;
 	public readonly slashCommands: Map<
@@ -109,6 +115,14 @@ export class Application extends Client {
 		this.on("error", (error) => {
 			log.fatal(error.message);
 			Sentry.captureException(error);
+		});
+
+		this.on("raw", (data: any) => {
+			if (!data.t) {
+				return;
+			}
+
+			eventHistogram.labels(data.t).inc();
 		});
 	}
 
