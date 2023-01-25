@@ -50,10 +50,12 @@ model BlockedMessage {
 }
 
 model StarCount {
-  id      Int    @id @default(autoincrement())
-  userId  BigInt
-  guildId BigInt
-  amount  Int
+  id        Int      @id @default(autoincrement())
+  userId    BigInt
+  guildId   BigInt
+  amount    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([userId, guildId])
   @@index([userId, guildId])

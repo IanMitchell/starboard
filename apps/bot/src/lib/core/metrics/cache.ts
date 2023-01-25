@@ -1,7 +1,7 @@
 import NodeCache from "node-cache";
 
 export const cache = new NodeCache();
-const CACHE_DURATION = 1000 * 60 * 5;
+const CACHE_DURATION = 60 * 5;
 
 export async function getCacheValue<T>(
 	key: string,

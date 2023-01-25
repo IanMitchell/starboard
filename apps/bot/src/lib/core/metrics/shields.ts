@@ -1,5 +1,6 @@
 import NodeCache from "node-cache";
 import database from "../database";
+import { getCacheValue } from "./cache";
 
 const cache = new NodeCache({
 	stdTTL: 60 * 60 * 3,
@@ -16,7 +17,11 @@ export function createShield(message: string, label: string, color = "green") {
 }
 
 export async function getTotalMessageCount() {
-	return database.message.count();
+	const value = await getCacheValue<number>("messageCount", async () => {
+		return database.message.count();
+	});
+
+	return value;
 }
 
 export async function getTotalStarCount() {

@@ -1,6 +1,6 @@
 import { collectDefaultMetrics, Gauge } from "prom-client";
 import { getTotalGuildCount, getTotalMemberCount } from "./discord";
-import { getTotalStarCount } from "./shields";
+import { getTotalMessageCount, getTotalStarCount } from "./shields";
 
 collectDefaultMetrics({
 	prefix: "starboard",
@@ -29,6 +29,15 @@ export const totalReactions = new Gauge({
 	help: "the total number of processed reactions",
 	async collect() {
 		const value = await getTotalStarCount();
+		this.set(value);
+	},
+});
+
+export const totalMessages = new Gauge({
+	name: "message_total",
+	help: "the total number of starboard messages",
+	async collect() {
+		const value = await getTotalMessageCount();
 		this.set(value);
 	},
 });
