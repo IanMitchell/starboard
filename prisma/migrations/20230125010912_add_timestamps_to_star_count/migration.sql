@@ -12,4 +12,4 @@ ADD COLUMN     "updatedAt" TIMESTAMP(3);
 UPDATE "StarCount" SET "updatedAt" = CURRENT_TIMESTAMP;
 
 -- AlterTable
-ALTER TABLE "StarCount" ALTER COLUMN "updatedAt" NOT NULL;
+ALTER TABLE "StarCount" ALTER COLUMN "updatedAt" SET NOT NULL;
