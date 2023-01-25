@@ -3,15 +3,20 @@ import { CommandArgs } from "../typedefs";
 import getLogger, { getReactionMeta } from "../lib/core/logging";
 import { isPublicTextChannel } from "../lib/core/discord/text-channels";
 import { getError } from "../lib/core/node/error";
-import client from "prom-client";
+import { Counter } from "prom-client";
 import Sentry from "../lib/core/logging/sentry";
 
 const log = getLogger("star");
 const messageSemaphores = new Set();
 
-const starHistorgram = new client.Histogram({
-	name: "star_count",
-	help: "A histogram of star reactions",
+const reactionSubtractCount = new Counter({
+	name: "total_reaction_subtracts",
+	help: "All Reaction Removals",
+});
+
+const reactionAddCount = new Counter({
+	name: "total_reaction_adds",
+	help: "All Reaction Adds",
 });
 
 export default async ({ bot }: CommandArgs) => {
@@ -47,6 +52,7 @@ export default async ({ bot }: CommandArgs) => {
 			getReactionMeta(reaction, user)
 		);
 
+		reactionSubtractCount.inc();
 		await bot.database.starCount.upsert({
 			create: {
 				guildId,
@@ -89,7 +95,7 @@ export default async ({ bot }: CommandArgs) => {
 			return;
 		}
 
-		starHistorgram.observe(1);
+		reactionAddCount.inc();
 		const guildId = BigInt(reaction.message.guildId);
 		const channelId = BigInt(reaction.message.channelId);
 		const messageId = BigInt(reaction.message.id);
