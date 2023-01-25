@@ -81,7 +81,9 @@ export default async ({ bot }: CommandArgs) => {
 			const oldChannel = await bot.channels.fetch(previous.log.toString());
 
 			if (
-				oldChannel?.isTextBased() &&
+				// eslint-disable-next-line @typescript-eslint/prefer-optional-chain
+				oldChannel != null &&
+				oldChannel.isTextBased() &&
 				!oldChannel.isThread() &&
 				!oldChannel.isDMBased()
 			) {
