@@ -147,12 +147,12 @@ export default async ({ bot }: CommandArgs) => {
 
 		const watchedChannels = channelSettings
 			.filter((channel) => channel.visible)
-			.map((channel) => channel.toString)
+			.map((channel) => channel.toString())
 			.join("\n");
 
 		const ignoredChannels = channelSettings
 			.filter((channel) => !channel.visible)
-			.map((channel) => channel.toString)
+			.map((channel) => channel.toString())
 			.join("\n");
 
 		embed.addFields([
