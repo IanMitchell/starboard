@@ -215,6 +215,11 @@ export default async ({ bot }: CommandArgs) => {
 			return;
 		}
 
+		// Check to see if the message is from before the bot joined
+		if (targetMessage.createdTimestamp < raw.message.guild!.joinedTimestamp) {
+			return;
+		}
+
 		let postId = null;
 
 		try {
