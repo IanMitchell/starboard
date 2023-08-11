@@ -9,7 +9,10 @@ import {
 	ChatInputCommandInteraction,
 	ContextMenuCommandInteraction,
 } from "discord.js";
-import { CommandBuilder, SlashCommandBuilderDefinition } from "../../typedefs";
+import {
+	CommandBuilder,
+	SlashCommandBuilderDefinition,
+} from "../../typedefs.js";
 
 export function getSlashCommandKey(definition: SlashCommandBuilderDefinition) {
 	if (Array.isArray(definition)) {

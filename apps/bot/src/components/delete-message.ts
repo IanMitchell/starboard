@@ -1,10 +1,10 @@
 import { ButtonBuilder } from "@discordjs/builders";
 import { ButtonStyle } from "discord-api-types/v10";
+import { InteractionType, PermissionFlagsBits } from "discord.js";
 import { Counter } from "prom-client";
-import { CommandArgs } from "../typedefs";
-import getLogger, { getInteractionMeta } from "../lib/core/logging";
-import { InteractionType, PermissionFlagsBits, Permissions } from "discord.js";
-import { getError } from "../lib/core/node/error";
+import getLogger, { getInteractionMeta } from "../lib/core/logging/index.js";
+import { getError } from "../lib/core/node/error.js";
+import { CommandArgs } from "../typedefs.js";
 
 const log = getLogger("delete-message");
 

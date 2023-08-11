@@ -1,12 +1,15 @@
+import {
+	ContextMenuCommandBuilder,
+	SlashCommandBuilder,
+} from "@discordjs/builders";
+import type { PrismaClient } from "@prisma/client";
+import chalk from "chalk";
 import type { RESTPostAPIApplicationCommandsJSONBody } from "discord-api-types/v10";
-import path from "node:path";
-import fs from "node:fs";
 import {
 	AutocompleteInteraction,
 	ButtonComponent,
 	ChatInputCommandInteraction,
 	Client,
-	CommandInteraction,
 	ContextMenuCommandInteraction,
 	IntentsBitField,
 	Interaction,
@@ -17,7 +20,20 @@ import {
 	SelectMenuComponent,
 	UserContextMenuCommandInteraction,
 } from "discord.js";
-import { getDirname } from "./lib/core/node/files";
+import fs from "node:fs";
+import path from "node:path";
+import { Counter } from "prom-client";
+import {
+	getMergedApplicationCommandData,
+	getSerializedCommandInteractionKey,
+	getSlashCommandKey,
+} from "./lib/core/commands.js";
+import database from "./lib/core/database.js";
+import { getInteractionKey } from "./lib/core/discord/interactions.js";
+import getLogger, { getInteractionMeta } from "./lib/core/logging/index.js";
+import Sentry from "./lib/core/logging/sentry.js";
+import { getError } from "./lib/core/node/error.js";
+import { getDirname } from "./lib/core/node/files.js";
 import {
 	ActionHandler,
 	BotCommand,
@@ -25,23 +41,6 @@ import {
 	CommandModule,
 	SlashCommandBuilderDefinition,
 } from "./typedefs";
-import database from "./lib/core/database";
-import getLogger, { getInteractionMeta } from "./lib/core/logging";
-import Sentry from "./lib/core/logging/sentry";
-import {
-	ContextMenuCommandBuilder,
-	SlashCommandBuilder,
-} from "@discordjs/builders";
-import {
-	getMergedApplicationCommandData,
-	getSerializedCommandInteractionKey,
-	getSlashCommandKey,
-} from "./lib/core/commands";
-import chalk from "chalk";
-import type { PrismaClient } from "@prisma/client";
-import { getError } from "./lib/core/node/error";
-import { Counter } from "prom-client";
-import { getInteractionKey } from "./lib/core/discord/interactions";
 
 const log = getLogger("bot");
 

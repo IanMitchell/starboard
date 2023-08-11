@@ -1,18 +1,18 @@
 import { ContextMenuCommandBuilder } from "@discordjs/builders";
 import { ApplicationCommandType } from "discord-api-types/v10";
-import * as messages from "../lib/starboard/messages";
 import {
 	ActionRowBuilder,
 	ButtonBuilder,
 	PermissionFlagsBits,
 } from "discord.js";
 import { Counter } from "prom-client";
-import { CommandArgs } from "../typedefs";
-import getLogger, { getInteractionMeta } from "../lib/core/logging";
 import {
 	DELETE_BUTTON_PREFIX,
 	getComponent as getDeleteButton,
-} from "../components/delete-message";
+} from "../components/delete-message.js";
+import getLogger, { getInteractionMeta } from "../lib/core/logging/index.js";
+import * as messages from "../lib/starboard/messages.js";
+import { CommandArgs } from "../typedefs.js";
 
 const log = getLogger("ignore");
 

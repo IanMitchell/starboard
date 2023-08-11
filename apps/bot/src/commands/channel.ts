@@ -3,15 +3,11 @@ import {
 	SlashCommandChannelOption,
 	SlashCommandSubcommandBuilder,
 } from "@discordjs/builders";
-import {
-	CommandInteraction,
-	EmbedBuilder,
-	PermissionFlagsBits,
-} from "discord.js";
-import { Counter } from "prom-client";
-import { CommandArgs } from "../typedefs";
-import getLogger, { getInteractionMeta } from "../lib/core/logging";
 import { ChannelType } from "discord-api-types/v10";
+import { EmbedBuilder, PermissionFlagsBits } from "discord.js";
+import { Counter } from "prom-client";
+import getLogger, { getInteractionMeta } from "../lib/core/logging/index.js";
+import { CommandArgs } from "../typedefs";
 
 const log = getLogger("channel");
 

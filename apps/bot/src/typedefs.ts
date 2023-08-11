@@ -10,7 +10,7 @@ import {
 	MessageComponent,
 	MessageComponentInteraction,
 } from "discord.js";
-import Application from "./bot";
+import Application from "./bot.js";
 
 type Bot = typeof Application;
 

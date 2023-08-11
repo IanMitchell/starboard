@@ -1,10 +1,11 @@
-import { createWebhookMessage } from "../lib/starboard/webhook";
-import { CommandArgs } from "../typedefs";
-import getLogger, { getReactionMeta } from "../lib/core/logging";
-import { isPublicTextChannel } from "../lib/core/discord/text-channels";
-import { getError } from "../lib/core/node/error";
 import { Counter } from "prom-client";
-import Sentry from "../lib/core/logging/sentry";
+import { isPublicTextChannel } from "../lib/core/discord/text-channels.js";
+import getLogger, { getReactionMeta } from "../lib/core/logging/index.js";
+import Sentry from "../lib/core/logging/sentry.js";
+import { getError } from "../lib/core/node/error.js";
+import { createWebhookMessage } from "../lib/starboard/webhook.js";
+import { CommandArgs } from "../typedefs.js";
+import {MessageReaction, PartialMessageReaction} from "discord.js";
 
 const log = getLogger("star");
 const messageSemaphores = new Set();
@@ -19,10 +20,22 @@ const reactionAddCount = new Counter({
 	help: "All Reaction Adds",
 });
 
+const filter = (reaction: MessageReaction | PartialMessageReaction) => (reaction.emoji.name
+	? !['💀','☠️','🏴‍☠️'].includes(reaction.emoji.name) || !reaction.emoji.name.includes('skull')
+	: reaction.emoji.id ? ![
+		'1029462631163117629',
+		'1084972849548247160',
+		'1052730858320187422',
+		'1053466851805499452',
+		'1099044075577036820',
+		'1110617878153146368',
+		'1053466530815418399'
+	].includes(reaction.emoji.id) : true)
+
 export default async ({ bot }: CommandArgs) => {
 	bot.on("messageReactionRemove", async (rawReaction, rawUser) => {
 		if (
-			rawReaction.emoji.name !== "⭐" ||
+			filter(rawReaction) ||
 			rawReaction.message.guildId === null ||
 			rawReaction.message.author?.id === rawUser?.id
 		) {
@@ -74,7 +87,7 @@ export default async ({ bot }: CommandArgs) => {
 	});
 
 	bot.on("messageReactionAdd", async (raw, rawUser) => {
-		if (raw.emoji.name !== "⭐" || raw.message.author === rawUser) {
+		if (filter(raw) || raw.message.author === rawUser) {
 			return;
 		}
 

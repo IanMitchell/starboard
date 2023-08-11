@@ -1,6 +1,6 @@
 import { Channel } from "discord.js";
-import bot from "../../bot";
-import { isPublicTextChannel } from "../core/discord/text-channels";
+import bot from "../../bot.js";
+import { isPublicTextChannel } from "../core/discord/text-channels.js";
 
 export async function isValidChannel(channel: Channel) {
 	const record = await bot.database.channelSetting.findUnique({

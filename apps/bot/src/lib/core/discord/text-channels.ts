@@ -1,10 +1,9 @@
 import {
 	Channel,
-	DMChannel,
 	NonThreadGuildBasedChannel,
 	PermissionFlagsBits,
 } from "discord.js";
-import bot from "../../../bot";
+import bot from "../../../bot.js";
 
 export function isPublicTextChannel(channel: Channel) {
 	if (!channel.isTextBased()) {
