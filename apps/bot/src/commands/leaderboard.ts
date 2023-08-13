@@ -104,7 +104,7 @@ export default async ({ bot }: CommandArgs) => {
 		if (receivedReactions.length > 0) {
 			receivedList = receivedReactions?.reduce(
 				(message, user) =>
-					`${message}**${user._sum.count ?? 0}** - ${userMention(
+					`${message}**${user._sum?.count ?? 0}** - ${userMention(
 						user.userId.toString()
 					)}\n`,
 				""
