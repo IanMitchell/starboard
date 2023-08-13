@@ -18,6 +18,9 @@ model GuildSetting {
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
   channelSetting ChannelSetting[]
+
+  unicodeEmoji String[] @default(["⭐"])
+  customEmoji  BigInt[] @default([])
 }
 
 model ChannelSetting {
@@ -30,15 +33,18 @@ model ChannelSetting {
 }
 
 model Message {
-  messageId   BigInt   @id
+  messageId   BigInt @id
   guildId     BigInt
   channelId   BigInt
   userId      BigInt
   // TODO: Rename to something better
-  crosspostId BigInt   @unique
-  count       Int
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  crosspostId BigInt @unique
+
+  count     Int
+  reactions BigInt[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([channelId, messageId])
 }

@@ -1,8 +1,8 @@
 import { SlashCommandBuilder, userMention } from "@discordjs/builders";
-import { CommandInteraction, EmbedBuilder } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import { Counter } from "prom-client";
-import { CommandArgs } from "../typedefs";
-import getLogger, { getInteractionMeta } from "../lib/core/logging";
+import getLogger, { getInteractionMeta } from "../lib/core/logging/index.js";
+import { CommandArgs } from "../typedefs.js";
 
 const log = getLogger("leaderboard");
 
@@ -104,7 +104,7 @@ export default async ({ bot }: CommandArgs) => {
 		if (receivedReactions.length > 0) {
 			receivedList = receivedReactions?.reduce(
 				(message, user) =>
-					`${message}**${user._sum.count ?? 0}** - ${userMention(
+					`${message}**${user._sum?.count ?? 0}** - ${userMention(
 						user.userId.toString()
 					)}\n`,
 				""

@@ -1,5 +1,5 @@
 import { ButtonBuilder } from "@discordjs/builders";
-import { ButtonStyle } from "discord-api-types/v10";
+import { APIUser, ButtonStyle } from "discord-api-types/v10";
 import {
 	ActionRowBuilder,
 	Message,
@@ -8,8 +8,8 @@ import {
 	VoiceChannel,
 	WebhookMessageOptions,
 } from "discord.js";
-import bot from "../../bot";
-import getLogger from "../core/logging";
+import bot from "../../bot.js";
+import getLogger from "../core/logging/index.js";
 
 const log = getLogger("webhook");
 
@@ -20,6 +20,9 @@ export async function createWebhookMessage(
 	if (message.channel.isDMBased()) {
 		return null;
 	}
+
+	const rawUser: APIUser & { global_name: string | null } =
+		(await message.client.rest.get(`/users/${message.author.id}`)) as any;
 
 	const webhooks = await channel.fetchWebhooks();
 	let webhook = webhooks.find(
@@ -50,7 +53,7 @@ export async function createWebhookMessage(
 	);
 
 	const webhookMessage: Omit<WebhookMessageOptions, "flags"> = {
-		username: message.author.username,
+		username: rawUser.global_name ?? rawUser.username,
 		avatarURL:
 			message.author.avatarURL({
 				extension: "png",

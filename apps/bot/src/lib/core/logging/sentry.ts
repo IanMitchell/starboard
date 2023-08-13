@@ -3,8 +3,8 @@ import * as Tracing from "@sentry/tracing";
 import { CaptureContext } from "@sentry/types";
 import { DMChannel, Interaction, Message } from "discord.js";
 import { Histogram } from "prom-client";
-import database from "../database";
-import { getError } from "../node/error";
+import database from "../database.js";
+import { getError } from "../node/error.js";
 
 const errorHistogram = new Histogram({
 	name: "error_count",

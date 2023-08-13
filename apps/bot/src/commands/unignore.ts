@@ -1,11 +1,11 @@
 import { ContextMenuCommandBuilder } from "@discordjs/builders";
 import { ApplicationCommandType } from "discord-api-types/v10";
-import * as messages from "../lib/starboard/messages";
-import { PermissionFlagsBits } from "discord.js";
+import { MessageReaction, PermissionFlagsBits } from "discord.js";
 import { Counter } from "prom-client";
-import { CommandArgs } from "../typedefs";
-import getLogger, { getInteractionMeta } from "../lib/core/logging";
-import { getError } from "../lib/core/node/error";
+import getLogger, { getInteractionMeta } from "../lib/core/logging/index.js";
+import { getError } from "../lib/core/node/error.js";
+import * as messages from "../lib/starboard/messages.js";
+import { CommandArgs } from "../typedefs.js";
 
 const log = getLogger("unignore");
 
@@ -103,7 +103,8 @@ export default async ({ bot }: CommandArgs) => {
 		});
 
 		const reaction = message.reactions.cache.find(
-			(reaction) => reaction.emoji.id === process.env.IGNORE_EMOJI_ID
+			(reaction: MessageReaction) =>
+				reaction.emoji.id === process.env.IGNORE_EMOJI_ID
 		);
 
 		if (reaction != null && bot.user != null) {

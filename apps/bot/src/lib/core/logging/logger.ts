@@ -13,11 +13,13 @@ type Logger = {
 	fatal: LogFn;
 };
 
-const logger = logdna.createLogger(process.env.LOGDNA_KEY!, {
-	app: "starboard",
-	level: "info",
-	indexMeta: true,
-});
+const logger = {
+	log: console.log,
+	info: console.log,
+	on(a: string, h: (...obj: any[]) => void) {
+		// test
+	},
+};
 
 if (process.env.NODE_ENV === "production") {
 	logger.info?.("Creating connection to LogDNA");
@@ -26,7 +28,7 @@ if (process.env.NODE_ENV === "production") {
 logger.on("error", console.error);
 
 async function onSignal() {
-	await once(logger, "cleared");
+	// await once(logger, "cleared");
 }
 
 process.on("SIGTERM", onSignal);
