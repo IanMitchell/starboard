@@ -16,17 +16,17 @@ import {
 	type SelectMenuComponent,
 	type UserContextMenuCommandInteraction,
 } from "discord.js";
-import { getDirname } from "./lib/core/node/files";
+import { getDirname } from "./lib/core/node/files.js";
 import {
 	type ActionHandler,
 	type BotCommand,
 	type BotComponent,
 	type CommandModule,
 	type SlashCommandBuilderDefinition,
-} from "./typedefs";
-import database from "./lib/core/database";
-import getLogger, { getInteractionMeta } from "./lib/core/logging";
-import Sentry from "./lib/core/logging/sentry";
+} from "./typedefs.js";
+import database from "./lib/core/database.js";
+import getLogger from "./lib/core/logging/logger.js";
+import Sentry from "./lib/core/logging/sentry.js";
 import {
 	type ContextMenuCommandBuilder,
 	type SlashCommandBuilder,
@@ -35,12 +35,13 @@ import {
 	getMergedApplicationCommandData,
 	getSerializedCommandInteractionKey,
 	getSlashCommandKey,
-} from "./lib/core/commands";
+} from "./lib/core/commands.js";
 import chalk from "chalk";
 import type { PrismaClient } from "@prisma/client";
-import { getError } from "./lib/core/node/error";
+import { getError } from "./lib/core/node/error.js";
 import { Counter } from "prom-client";
-import { getInteractionKey } from "./lib/core/discord/interactions";
+import { getInteractionKey } from "./lib/core/discord/interactions.js";
+import { getInteractionMeta } from "./lib/core/logging/meta.js";
 
 const log = getLogger("bot");
 

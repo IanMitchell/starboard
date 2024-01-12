@@ -1,5 +1,5 @@
 import { type Interaction, InteractionType } from "discord.js";
-import { getSerializedCommandInteractionKey } from "../commands";
+import { getSerializedCommandInteractionKey } from "../commands.js";
 
 export function getInteractionKey(interaction: Interaction) {
 	switch (interaction.type) {

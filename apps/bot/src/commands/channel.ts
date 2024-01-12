@@ -9,9 +9,10 @@ import {
 	PermissionFlagsBits,
 } from "discord.js";
 import { Counter } from "prom-client";
-import { type CommandArgs } from "../typedefs";
-import getLogger, { getInteractionMeta } from "../lib/core/logging";
+import { type CommandArgs } from "../typedefs.js";
+import getLogger from "../lib/core/logging/logger.js";
 import { ChannelType } from "discord-api-types/v10";
+import { getInteractionMeta } from "../lib/core/logging/meta.js";
 
 const log = getLogger("channel");
 

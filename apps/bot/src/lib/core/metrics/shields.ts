@@ -1,6 +1,6 @@
 import NodeCache from "node-cache";
-import database from "../database";
-import { getCacheValue } from "./cache";
+import database from "../database.js";
+import { getCacheValue } from "./cache.js";
 
 const cache = new NodeCache({
 	stdTTL: 60 * 60 * 3,

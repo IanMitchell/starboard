@@ -1,6 +1,6 @@
 import { collectDefaultMetrics, Gauge } from "prom-client";
-import { getTotalGuildCount, getTotalMemberCount } from "./discord";
-import { getTotalMessageCount, getTotalStarCount } from "./shields";
+import { getTotalGuildCount, getTotalMemberCount } from "./discord.js";
+import { getTotalMessageCount, getTotalStarCount } from "./shields.js";
 
 collectDefaultMetrics({
 	prefix: "starboard",

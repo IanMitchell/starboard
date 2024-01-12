@@ -1,11 +1,12 @@
 import { ContextMenuCommandBuilder } from "@discordjs/builders";
 import { ApplicationCommandType } from "discord-api-types/v10";
-import * as messages from "../lib/starboard/messages";
+import * as messages from "../lib/starboard/messages.js";
 import { PermissionFlagsBits } from "discord.js";
 import { Counter } from "prom-client";
-import { type CommandArgs } from "../typedefs";
-import getLogger, { getInteractionMeta } from "../lib/core/logging";
-import { getError } from "../lib/core/node/error";
+import { type CommandArgs } from "../typedefs.js";
+import getLogger from "../lib/core/logging/logger.js";
+import { getError } from "../lib/core/node/error.js";
+import { getInteractionMeta } from "../lib/core/logging/meta.js";
 
 const log = getLogger("unignore");
 

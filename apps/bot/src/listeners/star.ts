@@ -1,10 +1,11 @@
-import { createWebhookMessage } from "../lib/starboard/webhook";
-import { type CommandArgs } from "../typedefs";
-import getLogger, { getReactionMeta } from "../lib/core/logging";
-import { isPublicTextChannel } from "../lib/core/discord/text-channels";
-import { getError } from "../lib/core/node/error";
+import { createWebhookMessage } from "../lib/starboard/webhook.js";
+import { type CommandArgs } from "../typedefs.js";
+import getLogger from "../lib/core/logging/logger.js";
+import { isPublicTextChannel } from "../lib/core/discord/text-channels.js";
+import { getError } from "../lib/core/node/error.js";
 import { Counter } from "prom-client";
-import Sentry from "../lib/core/logging/sentry";
+import Sentry from "../lib/core/logging/sentry.js";
+import { getReactionMeta } from "src/lib/core/logging/meta.js";
 
 const log = getLogger("star");
 const messageSemaphores = new Set();

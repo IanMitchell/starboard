@@ -1,6 +1,6 @@
 import { type Message, type MessageContextMenuCommandInteraction } from "discord.js";
-import bot from "../../bot";
-import database from "../core/database";
+import bot from "../../bot.js";
+import database from "../core/database.js";
 
 export async function fetchInteractionMessage(
 	interaction: MessageContextMenuCommandInteraction

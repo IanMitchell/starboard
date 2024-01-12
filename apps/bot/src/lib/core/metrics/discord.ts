@@ -1,5 +1,5 @@
-import { getCacheValue } from "./cache";
-import bot from "../../../bot";
+import { getCacheValue } from "./cache.js";
+import bot from "../../../bot.js";
 
 export async function getTotalGuildCount() {
 	const value = await getCacheValue<number>("totalGuildCount", async () => {

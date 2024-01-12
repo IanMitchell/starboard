@@ -1,18 +1,19 @@
 import { formatDistance } from "date-fns";
 import { Counter } from "prom-client";
-import { type CommandArgs } from "../typedefs";
-import getLogger, { getInteractionMeta } from "../lib/core/logging";
+import { type CommandArgs } from "../typedefs.js";
+import getLogger from "../lib/core/logging/logger.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { EmbedBuilder } from "discord.js";
 import {
 	getTotalGuildCount,
 	getTotalMemberCount,
-} from "../lib/core/metrics/discord";
+} from "../lib/core/metrics/discord.js";
 import {
 	getTotalMessageCount,
 	getTotalStarCount,
-} from "../lib/core/metrics/shields";
-import { plural } from "../lib/starboard/plural";
+} from "../lib/core/metrics/shields.js";
+import { plural } from "../lib/starboard/plural.js";
+import { getInteractionMeta } from "../lib/core/logging/meta.js";
 
 const log = getLogger("info");
 

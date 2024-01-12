@@ -9,8 +9,8 @@ import {
 	type VoiceChannel,
 	type WebhookMessageCreateOptions,
 } from "discord.js";
-import bot from "../../bot";
-import getLogger from "../core/logging";
+import bot from "../../bot.js";
+import getLogger from "../core/logging/logger.js";
 
 const log = getLogger("webhook");
 

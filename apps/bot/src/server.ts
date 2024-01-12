@@ -1,11 +1,11 @@
 import fastify from "fastify";
-import { register } from "./lib/core/metrics/grafana";
+import { register } from "./lib/core/metrics/grafana.js";
 import cors from "@fastify/cors";
-import getLogger from "./lib/core/logging";
-import { getError } from "./lib/core/node/error";
-import shieldRoutes from "./routes/shield-routes";
-import database from "./lib/core/database";
-import Sentry from "./lib/core/logging/sentry";
+import getLogger from "./lib/core/logging/logger.js";
+import { getError } from "./lib/core/node/error.js";
+import shieldRoutes from "./routes/shield-routes.js";
+import database from "./lib/core/database.js";
+import Sentry from "./lib/core/logging/sentry.js";
 
 const server = fastify();
 void server.register(cors);

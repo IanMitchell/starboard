@@ -1,7 +1,8 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { Counter } from "prom-client";
-import { type CommandArgs } from "../typedefs";
-import getLogger, { getInteractionMeta } from "../lib/core/logging";
+import { type CommandArgs } from "../typedefs.js";
+import getLogger from "../lib/core/logging/logger.js";
+import { getInteractionMeta } from "../lib/core/logging/meta.js";
 
 const log = getLogger("ping");
 

@@ -8,12 +8,12 @@ import {
 	createShield,
 	getTotalMessageCount,
 	getTotalStarCount,
-} from "../lib/core/metrics/shields";
-import getLogger from "../lib/core/logging";
+} from "../lib/core/metrics/shields.js";
+import getLogger from "../lib/core/logging/logger.js";
 import {
 	getTotalGuildCount,
 	getTotalMemberCount,
-} from "../lib/core/metrics/discord";
+} from "../lib/core/metrics/discord.js";
 
 const log = getLogger("routes:shields");
 

@@ -24,9 +24,9 @@
 		"strict": true,
 
 		"lib": ["es2021"],
-		"module": "esnext",
+		"module": "NodeNext",
 		"target": "es2021",
-		"moduleResolution": "node",
+		"moduleResolution": "NodeNext",
 		"resolveJsonModule": true
 	},
 	// ignore node_modules and dist
