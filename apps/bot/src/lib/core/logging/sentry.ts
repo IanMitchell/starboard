@@ -1,9 +1,7 @@
 import * as Sentry from "@sentry/node";
-import * as Tracing from "@sentry/tracing";
 import { CaptureContext } from "@sentry/types";
 import { DMChannel, Interaction, Message } from "discord.js";
 import { Histogram } from "prom-client";
-import database from "../database";
 import { getError } from "../node/error";
 
 const errorHistogram = new Histogram({
@@ -24,10 +22,6 @@ function getSentry() {
 		Sentry.init({
 			dsn: process.env.SENTRY,
 			release: process.env.RAILWAY_GIT_COMMIT_SHA,
-			integrations: [
-				new Tracing.Integrations.Prisma({ client: database }),
-				new Sentry.Integrations.Http({ tracing: true }),
-			],
 			tracesSampleRate: 1.0,
 		});
 	}
