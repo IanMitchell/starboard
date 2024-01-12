@@ -5,7 +5,7 @@ import { isPublicTextChannel } from "../lib/core/discord/text-channels.js";
 import { getError } from "../lib/core/node/error.js";
 import { Counter } from "prom-client";
 import Sentry from "../lib/core/logging/sentry.js";
-import { getReactionMeta } from "src/lib/core/logging/meta.js";
+import { getReactionMeta } from "../lib/core/logging/meta.js";
 
 const log = getLogger("star");
 const messageSemaphores = new Set();
