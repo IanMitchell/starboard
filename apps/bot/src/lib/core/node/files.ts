@@ -1,5 +1,5 @@
 import { dirname } from "path";
-import { fileURLToPath, URL } from "url";
+import { fileURLToPath, type URL } from "url";
 
 /**
  * Call with `import.meta.url` to get the `__filename` equivalent

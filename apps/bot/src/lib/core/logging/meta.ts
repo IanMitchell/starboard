@@ -1,12 +1,10 @@
 import {
-	Channel,
-	Interaction,
-	Message,
-	DMChannel,
-	PartialDMChannel,
-	MessageReaction,
-	User,
-	BaseInteraction,
+	type Channel,
+	type Message,
+	type PartialDMChannel,
+	type MessageReaction,
+	type User,
+	type BaseInteraction,
 } from "discord.js";
 
 export function getChannelMeta(

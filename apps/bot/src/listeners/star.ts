@@ -1,5 +1,5 @@
 import { createWebhookMessage } from "../lib/starboard/webhook";
-import { CommandArgs } from "../typedefs";
+import { type CommandArgs } from "../typedefs";
 import getLogger, { getReactionMeta } from "../lib/core/logging";
 import { isPublicTextChannel } from "../lib/core/discord/text-channels";
 import { getError } from "../lib/core/node/error";
@@ -152,7 +152,7 @@ export default async ({ bot }: CommandArgs) => {
 		});
 
 		// Guild isn't fully setup yet
-		if (settings == null || settings.log == null) {
+		if (settings?.log == null) {
 			return;
 		}
 
@@ -193,7 +193,7 @@ export default async ({ bot }: CommandArgs) => {
 			settings.log.toString()
 		);
 
-		if (channel == null || !channel.isTextBased()) {
+		if (channel == null || !channel.isTextBased() || channel.isThread()) {
 			return;
 		}
 

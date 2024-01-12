@@ -1,7 +1,5 @@
-import logdna from "@logdna/logger";
 import chalk from "chalk";
 import debug from "debug";
-import { once } from "events";
 
 type LogFn = (message: string, meta?: Record<string, unknown>) => void;
 type Logger = {
@@ -13,53 +11,7 @@ type Logger = {
 	fatal: LogFn;
 };
 
-const logger = logdna.createLogger(process.env.LOGDNA_KEY!, {
-	app: "starboard",
-	level: "info",
-	indexMeta: true,
-});
-
-if (process.env.NODE_ENV === "production") {
-	logger.info?.("Creating connection to LogDNA");
-}
-
-logger.on("error", console.error);
-
-async function onSignal() {
-	await once(logger, "cleared");
-}
-
-process.on("SIGTERM", onSignal);
-process.on("SIGINT", onSignal);
-
-function logLine(message: string, options: logdna.LogOptions) {
-	logger.log(message, options);
-}
-
 export default function getLogger(name: string): Logger {
-	if (process.env.NODE_ENV === "production") {
-		return {
-			trace(message, meta) {
-				logLine(message, { meta, level: "trace", app: name });
-			},
-			debug(message, meta) {
-				logLine(message, { meta, level: "debug", app: name });
-			},
-			info(message, meta) {
-				logLine(message, { meta, level: "info", app: name });
-			},
-			warn(message, meta) {
-				logLine(message, { meta, level: "warn", app: name });
-			},
-			error(message, meta) {
-				logLine(message, { meta, level: "error", app: name });
-			},
-			fatal(message, meta) {
-				logLine(message, { meta, level: "fatal", app: name });
-			},
-		};
-	}
-
 	const log = debug(name);
 	log(`created logger ${name}`);
 

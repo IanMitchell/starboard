@@ -1,15 +1,15 @@
 import {
 	ContextMenuCommandBuilder,
-	SlashCommandBuilder,
+	type SlashCommandBuilder,
 	SlashCommandSubcommandBuilder,
 	SlashCommandSubcommandGroupBuilder,
 } from "@discordjs/builders";
 import {
-	AutocompleteInteraction,
-	ChatInputCommandInteraction,
-	ContextMenuCommandInteraction,
+	type AutocompleteInteraction,
+	type ChatInputCommandInteraction,
+	type ContextMenuCommandInteraction,
 } from "discord.js";
-import { CommandBuilder, SlashCommandBuilderDefinition } from "../../typedefs";
+import { type CommandBuilder, type SlashCommandBuilderDefinition } from "../../typedefs";
 
 export function getSlashCommandKey(definition: SlashCommandBuilderDefinition) {
 	if (Array.isArray(definition)) {

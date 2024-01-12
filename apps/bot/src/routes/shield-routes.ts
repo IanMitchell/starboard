@@ -1,6 +1,5 @@
 import type {
 	FastifyInstance,
-	FastifyPluginOptions,
 	RawReplyDefaultExpression,
 	RawRequestDefaultExpression,
 } from "fastify";
@@ -24,7 +23,6 @@ export default function shieldRoutes(
 		RawRequestDefaultExpression,
 		RawReplyDefaultExpression
 	>,
-	options: FastifyPluginOptions,
 	done: (err?: Error) => void
 ) {
 	server.get("/shields/guilds", async (request, response) => {

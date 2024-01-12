@@ -4,7 +4,7 @@ import {
 } from "@discordjs/builders";
 import { PermissionFlagsBits } from "discord.js";
 import { Counter } from "prom-client";
-import { CommandArgs } from "../typedefs";
+import { type CommandArgs } from "../typedefs";
 import getLogger, { getInteractionMeta } from "../lib/core/logging";
 
 const log = getLogger("amount");

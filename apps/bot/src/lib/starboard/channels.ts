@@ -1,4 +1,4 @@
-import { Channel } from "discord.js";
+import { type Channel } from "discord.js";
 import bot from "../../bot";
 import { isPublicTextChannel } from "../core/discord/text-channels";
 

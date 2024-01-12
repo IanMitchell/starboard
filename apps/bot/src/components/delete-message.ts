@@ -1,7 +1,7 @@
 import { ButtonBuilder } from "@discordjs/builders";
 import { ButtonStyle } from "discord-api-types/v10";
 import { Counter } from "prom-client";
-import { CommandArgs } from "../typedefs";
+import { type CommandArgs } from "../typedefs";
 import getLogger, { getInteractionMeta } from "../lib/core/logging";
 import { InteractionType, PermissionFlagsBits, Permissions } from "discord.js";
 import { getError } from "../lib/core/node/error";

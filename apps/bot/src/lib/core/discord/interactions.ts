@@ -1,4 +1,4 @@
-import { Interaction, InteractionType } from "discord.js";
+import { type Interaction, InteractionType } from "discord.js";
 import { getSerializedCommandInteractionKey } from "../commands";
 
 export function getInteractionKey(interaction: Interaction) {

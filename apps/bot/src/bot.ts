@@ -2,35 +2,34 @@ import type { RESTPostAPIApplicationCommandsJSONBody } from "discord-api-types/v
 import path from "node:path";
 import fs from "node:fs";
 import {
-	AutocompleteInteraction,
-	ButtonComponent,
-	ChatInputCommandInteraction,
+	type AutocompleteInteraction,
+	type ButtonComponent,
+	type ChatInputCommandInteraction,
 	Client,
-	CommandInteraction,
-	ContextMenuCommandInteraction,
+	type ContextMenuCommandInteraction,
 	IntentsBitField,
-	Interaction,
+	type Interaction,
 	InteractionType,
-	MessageComponentInteraction,
-	MessageContextMenuCommandInteraction,
+	type MessageComponentInteraction,
+	type MessageContextMenuCommandInteraction,
 	Partials,
-	SelectMenuComponent,
-	UserContextMenuCommandInteraction,
+	type SelectMenuComponent,
+	type UserContextMenuCommandInteraction,
 } from "discord.js";
 import { getDirname } from "./lib/core/node/files";
 import {
-	ActionHandler,
-	BotCommand,
-	BotComponent,
-	CommandModule,
-	SlashCommandBuilderDefinition,
+	type ActionHandler,
+	type BotCommand,
+	type BotComponent,
+	type CommandModule,
+	type SlashCommandBuilderDefinition,
 } from "./typedefs";
 import database from "./lib/core/database";
 import getLogger, { getInteractionMeta } from "./lib/core/logging";
 import Sentry from "./lib/core/logging/sentry";
 import {
-	ContextMenuCommandBuilder,
-	SlashCommandBuilder,
+	type ContextMenuCommandBuilder,
+	type SlashCommandBuilder,
 } from "@discordjs/builders";
 import {
 	getMergedApplicationCommandData,
@@ -122,7 +121,7 @@ export class Application extends Client {
 				return;
 			}
 
-			eventHistogram.labels(data.t).inc();
+			eventHistogram.labels(data.t as string).inc();
 		});
 	}
 

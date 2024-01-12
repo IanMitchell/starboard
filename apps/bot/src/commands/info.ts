@@ -1,6 +1,6 @@
 import { formatDistance } from "date-fns";
 import { Counter } from "prom-client";
-import { CommandArgs } from "../typedefs";
+import { type CommandArgs } from "../typedefs";
 import getLogger, { getInteractionMeta } from "../lib/core/logging";
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { EmbedBuilder } from "discord.js";

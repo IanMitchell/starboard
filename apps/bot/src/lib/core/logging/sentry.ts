@@ -1,6 +1,6 @@
 import * as Sentry from "@sentry/node";
-import { CaptureContext } from "@sentry/types";
-import { DMChannel, Interaction, Message } from "discord.js";
+import { type CaptureContext } from "@sentry/types";
+import { DMChannel, type Interaction, type Message } from "discord.js";
 import { Histogram } from "prom-client";
 import { getError } from "../node/error";
 

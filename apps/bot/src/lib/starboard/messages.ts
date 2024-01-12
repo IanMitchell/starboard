@@ -1,4 +1,4 @@
-import { Message, MessageContextMenuCommandInteraction } from "discord.js";
+import { type Message, type MessageContextMenuCommandInteraction } from "discord.js";
 import bot from "../../bot";
 import database from "../core/database";
 

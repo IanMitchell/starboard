@@ -1,7 +1,6 @@
 import {
-	Channel,
-	DMChannel,
-	NonThreadGuildBasedChannel,
+	type Channel,
+	type NonThreadGuildBasedChannel,
 	PermissionFlagsBits,
 } from "discord.js";
 import bot from "../../../bot";

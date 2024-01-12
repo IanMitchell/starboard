@@ -1,16 +1,16 @@
 import {
-	ContextMenuCommandBuilder,
-	SlashCommandBuilder,
-	SlashCommandSubcommandBuilder,
-	SlashCommandSubcommandGroupBuilder,
+	type ContextMenuCommandBuilder,
+	type SlashCommandBuilder,
+	type SlashCommandSubcommandBuilder,
+	type SlashCommandSubcommandGroupBuilder,
 } from "@discordjs/builders";
 import {
-	CommandInteraction,
-	Interaction,
-	MessageComponent,
-	MessageComponentInteraction,
+	type CommandInteraction,
+	type Interaction,
+	type MessageComponent,
+	type MessageComponentInteraction,
 } from "discord.js";
-import Application from "./bot";
+import type Application from "./bot";
 
 type Bot = typeof Application;
 

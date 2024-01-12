@@ -2,11 +2,12 @@ import { ButtonBuilder } from "@discordjs/builders";
 import { ButtonStyle } from "discord-api-types/v10";
 import {
 	ActionRowBuilder,
-	Message,
-	NewsChannel,
-	TextChannel,
-	VoiceChannel,
-	WebhookMessageOptions,
+	type Message,
+	type NewsChannel,
+	type StageChannel,
+	type TextChannel,
+	type VoiceChannel,
+	type WebhookMessageCreateOptions,
 } from "discord.js";
 import bot from "../../bot";
 import getLogger from "../core/logging";
@@ -14,7 +15,7 @@ import getLogger from "../core/logging";
 const log = getLogger("webhook");
 
 export async function createWebhookMessage(
-	channel: TextChannel | NewsChannel | VoiceChannel,
+	channel: TextChannel | NewsChannel | VoiceChannel | StageChannel,
 	message: Message
 ) {
 	if (message.channel.isDMBased()) {
@@ -49,7 +50,7 @@ export async function createWebhookMessage(
 		embed.toJSON()
 	);
 
-	const webhookMessage: Omit<WebhookMessageOptions, "flags"> = {
+	const webhookMessage: Omit<WebhookMessageCreateOptions, "flags"> = {
 		username: message.author.username,
 		avatarURL:
 			message.author.avatarURL({
