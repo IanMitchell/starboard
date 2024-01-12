@@ -23,6 +23,7 @@ export default function shieldRoutes(
 		RawRequestDefaultExpression,
 		RawReplyDefaultExpression
 	>,
+	options: unknown,
 	done: (err?: Error) => void
 ) {
 	server.get("/shields/guilds", async (request, response) => {
